@@ -1,0 +1,19 @@
+﻿date: 2026-02-24
+session_id: agent_git_001
+goal: Create baseline git commit on main
+inputs:
+  - user approval to keep main and proceed with initial commit
+actions:
+  - added ignore rules for pycache, pyc, .codex_header.tmp, Office temp, MiKTeX config
+  - created root commit "init: baseline snapshot"
+results:
+  - git history initialized on main (commit 4ade449)
+artifacts:
+  - .gitignore
+  - git commit 4ade449
+tests:
+  - not run
+next:
+  - future changes can use per-task branches and /merge workflow
+open_questions:
+  - should we ignore runtime log files under notes/Journal/telegram/ and portal logs?

@@ -15,6 +15,7 @@ def default_state() -> Dict[str, Any]:
         "last_health_check_at": "",
         "last_report_at": "",
         "last_block_id": -1,
+        "last_task_mode": "",
         "pending_tasks": 0,
         "completed_tasks": 0,
         "notes": "",

@@ -8,6 +8,10 @@
   "auto_mark_done": false,
   "max_tasks_per_cycle": 1,
   "evolution_interval_minutes": 15,
+  "evolution_task_modes": [
+    "review",
+    "edit"
+  ],
   "quiet_hours_msk": {
     "start": "02:00",
     "end": "08:00"

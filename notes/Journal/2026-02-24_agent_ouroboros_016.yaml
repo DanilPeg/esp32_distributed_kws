@@ -1,0 +1,23 @@
+﻿date: 2026-02-24
+session_id: agent_ouroboros_016
+goal: Allow evolution to enqueue edit tasks (code/notebooks)
+inputs:
+  - user approval for code-edit tasks
+actions:
+  - added evolution_task_modes (review/edit) and task-mode rotation
+  - added edit task template with notebook hint for training/analysis paths
+  - updated BIBLE and daily summary
+results:
+  - evolution can schedule edit tasks in addition to reviews
+artifacts:
+  - code/agent/evolution.py
+  - code/agent/agent_config.json
+  - code/agent/state.py
+  - BIBLE.md
+  - notes/Journal/summaries/2026-02-24.md
+tests:
+  - python -m py_compile code/agent/evolution.py code/agent/state.py
+next:
+  - consider adding a separate notebook-only mode if needed
+open_questions:
+  - should manual /task be restricted by task_mode rules or remain free-form?

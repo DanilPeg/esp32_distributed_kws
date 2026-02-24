@@ -1,6 +1,6 @@
 **Agent Bible**
 
-Version: v1.23
+Version: v1.24
 
 Last updated: 2026-02-24
 
@@ -332,6 +332,8 @@ Include a short summary, evidence list, and next steps when helpful.
 
 - Use self-refine for complex outputs: draft -> critique -> revise.
 
+- Evolution task types: controlled by `evolution_task_modes` (e.g., `review`, `edit`). Edit tasks may modify code/notebooks; keep changes minimal and report them.
+
 - Quiet hours: do not auto-schedule new tasks during MSK quiet hours (see `quiet_hours_msk` in `code/agent/agent_config.json`).
 
 - After each significant task, record 1-3 lessons learned in the journal and apply them next time.
@@ -339,6 +341,8 @@ Include a short summary, evidence list, and next steps when helpful.
 - Keep BIBLE small and stable; move volatile details to Journal/Research.
 
 **Changelog**
+
+v1.24 (2026-02-24): documented evolution task modes (review/edit).
 
 v1.22 (2026-02-24): added articles path for web portal.
 
