@@ -1,0 +1,25 @@
+date: 2026-02-24
+session_id: web_022
+goal: Fix Russian encoding in portal articles
+inputs:
+  - User report: broken Russian encoding in articles
+decisions:
+  - Rewrite articles and index with proper UTF-8 content via PowerShell UTF-8 output
+actions:
+  - Rewrote distributed-esp32-research.md with correct Russian text
+  - Rewrote self-improving-agents.md with correct Russian text
+  - Rewrote esp32-microcontrollers-deep-dive.md with correct Russian text
+  - Rewrote notes/Research/articles/index.json with correct Russian metadata
+results:
+  - Article content and metadata now display correctly in Russian
+artifacts:
+  - notes/Research/articles/distributed-esp32-research.md
+  - notes/Research/articles/self-improving-agents.md
+  - notes/Research/articles/esp32-microcontrollers-deep-dive.md
+  - notes/Research/articles/index.json
+tests:
+  - Not run (content update only)
+next:
+  - Ask user to confirm display on portal
+open_questions:
+  - Should we remove BOMs or keep as-is if rendering is OK?

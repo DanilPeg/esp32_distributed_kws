@@ -1,0 +1,32 @@
+﻿date: 2026-02-24
+session_id: cli
+goal: embed roadmap on home, fix roadmap error, add energy-drink timer panel
+inputs:
+  - user request: roadmap on home and visually enhanced
+  - user request: energy-drink counter with daily reset timer (19:00 MSK)
+
+decisions:
+  - roadmap data remains in roadmap_ru.json; render directly on home
+  - team rules status stored in notes/Team_rules_status.json for manual updates
+  - timer computed client-side in JS for MSK offset
+
+actions:
+  - fixed roadmap template to use p["items"] (Jinja dict key)
+  - added energy panel + roadmap section to index.html
+  - added JS countdown to next 19:00 MSK
+  - added styles for roadmap and energy blocks
+  - created notes/Team_rules_status.json
+  - updated BIBLE.md to v1.17 (team rules status path)
+  - restarted uvicorn
+results:
+  - roadmap renders on homepage; /roadmap should work now
+  - energy timer and scoreboard visible on homepage
+artifacts:
+  - code/web_portal/app.py
+  - code/web_portal/templates/index.html
+  - code/web_portal/templates/roadmap.html
+  - code/web_portal/static/styles.css
+  - notes/Team_rules_status.json
+  - BIBLE.md
+open_questions:
+  - confirm roadmap display and energy panel content

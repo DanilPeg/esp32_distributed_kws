@@ -1,0 +1,20 @@
+date: 2026-02-24
+session_id: cli
+goal: mitigate micro_speech_sim ring buffer overflow and I2S read stalls
+inputs:
+  - user report: TF_LITE_AUDIO_PROVIDER ring buffer write failures
+
+decisions:
+  - reduce I2S block size to 20ms
+  - increase ring buffer size
+  - increase read/write timeouts and reset buffer on overflow
+
+actions:
+  - updated audio_provider.cpp in micro_speech_sim root and micro_speech/ sketch
+results:
+  - expected fewer I2S read 0s and fewer RB overflows; recovery on overflow
+artifacts:
+  - code/firmware/micro_speech_sim/audio_provider.cpp
+  - code/firmware/micro_speech_sim/micro_speech/audio_provider.cpp
+open_questions:
+  - confirm behavior on device after reflashing

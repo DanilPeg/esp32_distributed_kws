@@ -1,0 +1,17 @@
+checkpoint_id: 2026-02-23_001
+scope: project_status
+state_summary: |
+  Latest logs cover ESP32-S3 boot state capture and micro_speech_sim fake-mic enablement.
+  BIBLE updated to include startup procedure and Telegram UTF-8 encoding rule.
+completed:
+  - Captured ESP32-S3 boot log (wifi_scan, ESP-IDF v4.4.2-dirty) and saved raw+summary.
+  - Added fake mic mode to micro_speech_sim and documented hardware ops playbook.
+  - Updated BIBLE.md to v1.4.
+in_progress:
+  - Baseline micro_speech run in Arduino IDE on ESP32 (needs logs).
+  - Decide whether to keep USE_FAKE_MIC=1 after baseline tests.
+  - Decide whether to install esptool for chip_id/flash_id.
+backlog:
+  - Model training/quantization pipeline and distributed protocol experiments.
+risks:
+  - Flash size mismatch reported by boot log (detected 8MB vs header 2MB).

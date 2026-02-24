@@ -1,0 +1,17 @@
+﻿[
+    {
+        "ProcessName":  "python",
+        "Id":  52480,
+        "Role":  "bridge"
+    },
+    {
+        "ProcessName":  "python",
+        "Id":  53544,
+        "Role":  "relay"
+    },
+    {
+        "ProcessName":  "powershell",
+        "Id":  59532,
+        "Role":  "autosend"
+    }
+]

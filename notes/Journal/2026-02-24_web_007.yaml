@@ -1,0 +1,38 @@
+﻿date: 2026-02-24
+session_id: cli
+goal: enrich portal with materials browser, clickable summary links, docs indexing, and plan on home
+inputs:
+  - request: clickable links in summaries
+  - request: inline viewing of scripts with syntax highlighting
+  - request: auto refresh / button to reload docs
+  - request: expose all research + latest PP docx and add global plan
+
+decisions:
+  - implement /browse and /view for read-only repo browsing
+  - use highlight.js for client-side code highlighting
+  - show global plan excerpt + latest PP docx on home page
+
+actions:
+  - created notes/Project_Proposal/Project_Plan.md
+  - updated summary (2026-02-24) with clickable links
+  - added /browse, /view, /file routes and safe path resolver
+  - updated documents page to index Research/Project_Proposal/Agent docs
+  - added materials browser + inline viewer (images/PDF/code)
+  - renamed portal title and nav updates
+  - updated BIBLE.md to v1.16 (plan location + PP draft note)
+results:
+  - portal now links summaries to artifacts and can preview code/images/PDFs
+  - home page shows global plan and latest PP docx
+artifacts:
+  - notes/Project_Proposal/Project_Plan.md
+  - notes/Journal/summaries/2026-02-24.md
+  - code/web_portal/app.py
+  - code/web_portal/templates/browse.html
+  - code/web_portal/templates/view.html
+  - code/web_portal/templates/index.html
+  - code/web_portal/templates/research.html
+  - code/web_portal/templates/base.html
+  - code/web_portal/static/styles.css
+  - BIBLE.md
+open_questions:
+  - confirm desired scope for repo mirroring (only code/notes/images or more)

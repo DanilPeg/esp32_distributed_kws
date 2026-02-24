@@ -1,0 +1,32 @@
+﻿date: 2026-02-24
+session_id: cli
+goal: fix portal auth prompt, add daily summaries, normalize BIBLE line breaks
+inputs:
+  - user report: no password prompt on web portal
+  - request: daily summary window + summary for today
+  - request: explain BIBLE blank lines
+
+decisions:
+  - treat UTF-8 BOM in web_portal.env as root cause of missing auth prompt
+  - add daily summaries from notes/Journal/summaries/*.md to Journal page
+
+actions:
+  - updated code/web_portal/app.py to strip BOM from env keys
+  - rewrote code/scripts/web_portal.env without BOM
+  - added daily summary listing to Journal page (app + template + CSS)
+  - created notes/Journal/summaries/2026-02-24.md
+  - normalized BIBLE.md line endings and collapsed extra blank lines; bumped to v1.15
+results:
+  - auth prompt should now appear for fresh sessions
+  - Journal page shows daily summaries
+artifacts:
+  - code/web_portal/app.py
+  - code/web_portal/templates/journal.html
+  - code/web_portal/static/styles.css
+  - code/web_portal/README.md
+  - notes/Journal/summaries/2026-02-24.md
+  - BIBLE.md
+  - notes/Journal/web_portal_uvicorn.out.log
+  - notes/Journal/web_portal_uvicorn.err.log
+open_questions:
+  - confirm login prompt appears via ngrok URL

@@ -1,0 +1,29 @@
+date: 2026-02-23
+session_id: cli
+goal: capture ESP32-S3 boot log and record device state
+inputs:
+  - device: ESP32-S3 on COM6
+  - action: open serial port at 115200 and read boot output
+observations:
+  - boot app: wifi_scan
+  - ESP-IDF: v4.4.2-dirty
+  - flash size mismatch: detected 8MB, binary header 2MB
+  - port open triggers reset (USB_UART_CHIP_RESET)
+decisions:
+  - save raw boot log and summary in notes/Research
+  - note esptool not installed for chip_id/flash_id
+actions:
+  - captured COM6 boot log
+  - wrote notes/Research/esp32s3_bootlog_2026-02-23_raw.txt
+  - wrote notes/Research/esp32s3_bootlog_2026-02-23_summary.md
+results:
+  - baseline hardware state recorded
+artifacts:
+  - notes/Research/esp32s3_bootlog_2026-02-23_raw.txt
+  - notes/Research/esp32s3_bootlog_2026-02-23_summary.md
+tests: []
+next:
+  - decide whether to install esptool for chip_id/flash_id
+  - proceed to micro_speech baseline in Arduino IDE
+open_questions:
+  - confirm whether current firmware should be replaced now or kept until baseline

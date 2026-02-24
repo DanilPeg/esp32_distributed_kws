@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1020"/>
+      <stop offset="1" stop-color="#1a2338"/>
+    </linearGradient>
+    <linearGradient id="loop" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7aa2ff"/>
+      <stop offset="1" stop-color="#62f0b7"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#bg2)"/>
+  <circle cx="600" cy="350" r="180" fill="none" stroke="url(#loop)" stroke-width="10" opacity="0.9"/>
+  <circle cx="600" cy="350" r="260" fill="none" stroke="url(#loop)" stroke-width="6" opacity="0.5" stroke-dasharray="14 10"/>
+  <circle cx="600" cy="350" r="90" fill="#0b1220" stroke="#7aa2ff" stroke-width="3"/>
+  <path d="M600 170 L640 220 L600 210 L560 220 Z" fill="#62f0b7"/>
+  <path d="M600 530 L640 480 L600 490 L560 480 Z" fill="#7aa2ff"/>
+  <text x="80" y="640" fill="#e5e7eb" font-family="Space Grotesk, Arial" font-size="42">Self-Improving LLM Agents</text>
+</svg>

@@ -1,0 +1,18 @@
+﻿date: 2026-02-24
+session_id: cli
+goal: enable ngrok external access for web portal
+inputs:
+  - ngrok authtoken provided by user
+
+decisions:
+  - store authtoken in ngrok config (user profile)
+
+actions:
+  - ran ngrok config add-authtoken
+  - started ngrok http 8000
+results:
+  - ngrok tunnel active (https) pointing to localhost:8000
+artifacts:
+  - ngrok config: %LOCALAPPDATA%\ngrok\ngrok.yml
+open_questions:
+  - none

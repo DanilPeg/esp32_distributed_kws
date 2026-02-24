@@ -1,0 +1,23 @@
+date: 2026-02-24
+session_id: cli
+goal: create baseline UML diagram and summary artifact
+inputs:
+  - user request: UML for baseline code (all cpp/h)
+  - baseline logs already recorded
+
+decisions:
+  - render PlantUML to PNG in images/diagrams
+  - add research summary file for baseline
+
+actions:
+  - generated images/diagrams/micro_speech_baseline.png from .puml
+  - created notes/Research/micro_speech_baseline_2026-02-24_summary.md
+results:
+  - baseline UML diagram available as PNG
+  - baseline summary stored in Research
+artifacts:
+  - images/diagrams/micro_speech_baseline.puml
+  - images/diagrams/micro_speech_baseline.png
+  - notes/Research/micro_speech_baseline_2026-02-24_summary.md
+open_questions:
+  - whether to send UML image to Telegram

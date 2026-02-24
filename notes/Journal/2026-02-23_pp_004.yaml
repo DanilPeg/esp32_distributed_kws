@@ -1,0 +1,27 @@
+﻿date: 2026-02-23
+session_id: 2026-02-23-pp-004
+goal: Try local MiKTeX directories to generate PDF.
+inputs:
+  - notes/Project_Proposal/Project_Proposal_Draft.md
+  - notes/Project_Proposal/templates/IEEE-template-a4.docx
+
+decisions:
+  - Attempt to bypass MiKTeX setup via local user dirs and no-registry mode.
+
+actions:
+  - Created local MiKTeX dirs under notes/Project_Proposal/.miktex.
+  - Ran pandoc with xelatex using MIKTEX_USER* env vars and MIKTEX_NO_REGISTRY.
+  - Tried MiKTeX CLI discovery and repository listing.
+
+results:
+  - PDF generation still fails; MiKTeX requires initial setup/update check and tries to access registry.
+  - miktexsetup repo listing failed with SSL error to api2.miktex.org.
+
+artifacts:
+  - notes/Project_Proposal/.miktex/* (local dirs created)
+
+tests: n/a
+next:
+  - Ask user to complete MiKTeX setup/update or approve portable MiKTeX download.
+open_questions:
+  - Is a large portable MiKTeX download acceptable?

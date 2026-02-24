@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel">
+  <div class="row">
+    <div class="row-main">
+      <div class="row-title">Дорожная карта диплома</div>
+      <div class="row-meta">{{ data.updated if data else '' }}</div>
+    </div>
+  </div>
+  {% if data and data.phases %}
+    <div class="roadmap">
+      {% for p in data.phases %}
+        <div class="roadmap-item status-{{ p.status }}">
+          <div class="roadmap-header">
+            <div class="roadmap-title">{{ p.title }}</div>
+            <div class="roadmap-status">{{ p.status_ru }}</div>
+          </div>
+          {% if p.goal %}
+            <div class="roadmap-goal">{{ p.goal }}</div>
+          {% endif %}
+          {% if p.get('items') %}
+            <ul class="roadmap-list">
+              {% for it in p.get('items') %}
+                <li>{{ it }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty">Нет данных роадмапы.</div>
+  {% endif %}
+</section>
+{% endblock %}

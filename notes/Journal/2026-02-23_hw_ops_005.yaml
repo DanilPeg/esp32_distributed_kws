@@ -1,0 +1,26 @@
+date: 2026-02-23
+session_id: telegram
+goal: record Sergey oral report on micro_speech inference test
+inputs:
+  - source: Sergey (@sirezya)
+  - sketch: micro_spech.ino (not in repo)
+  - board: esp32s3-32
+  - mic: nmp441
+  - noise: medium-strong
+  - power: stable 2A
+  - result: recognition of commands yes/no/unknown/silence; unstable, high delay
+  - logs: not provided
+
+decisions:
+  - record as oral/unverified result pending logs
+
+actions:
+  - added journal entry with constraints and missing artifacts
+results:
+  - unverified test noted; requires logs to confirm
+artifacts:
+  - notes/Journal/2026-02-23_hw_ops_005.yaml
+open_questions:
+  - exact sketch/version and modifications
+  - model/tflite version and thresholds ("200 units")
+  - quantitative metrics (attempt counts, accuracy, latency)

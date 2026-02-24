@@ -1,0 +1,116 @@
+{
+  "pending": [],
+  "running": [],
+  "completed": [
+    {
+      "type": "review",
+      "title": "Daily review: Firmware core",
+      "description": "Review block: Firmware core\nPaths: code/firmware/\nFocus: Stability, I2S/audio, inference loop, logging.\nDeliverable: short notes in journal + any concrete fixes to propose.",
+      "needs_agent": true,
+      "id": "b7530fc8",
+      "created_at": "2026-02-24T18:18:16.842361+00:00",
+      "status": "auto_closed",
+      "started_at": "2026-02-24T18:21:03.169946+00:00",
+      "finished_at": "2026-02-24T18:53:46.615078+00:00"
+    },
+    {
+      "type": "review",
+      "title": "Daily review: Training + analysis",
+      "description": "Review block: Training + analysis\nPaths: code/training/, code/analysis/\nFocus: Reproducibility, metrics, artifacts, notebooks.\nDeliverable: short notes in journal + any concrete fixes to propose.",
+      "needs_agent": true,
+      "id": "9bd2b53c",
+      "created_at": "2026-02-24T18:35:50.510075+00:00",
+      "status": "stopped_by_user",
+      "started_at": "2026-02-24T18:35:50.533766+00:00",
+      "finished_at": "2026-02-24T19:05:28.037348+00:00"
+    },
+    {
+      "type": "review",
+      "title": "Daily review: Protocol + shared",
+      "description": "Review block: Protocol + shared\nPaths: code/protocol/, code/shared/\nFocus: Message formats, consistency, utilities.\nDeliverable: short notes in journal + any concrete fixes to propose.",
+      "needs_agent": true,
+      "id": "afd1dc94",
+      "created_at": "2026-02-24T18:53:45.789870+00:00",
+      "status": "stopped_by_user",
+      "started_at": "2026-02-24T18:53:45.818971+00:00",
+      "finished_at": "2026-02-24T19:05:28.037348+00:00"
+    },
+    {
+      "type": "test",
+      "title": "TEST: codex auto-run",
+      "description": "Write a short report.md confirming the test run. Include the phrase: CODEx AUTO OK. Then exit.",
+      "needs_agent": true,
+      "id": "5af1b9ac",
+      "created_at": "2026-02-24T18:57:12.934170+00:00",
+      "status": "stopped_by_user",
+      "started_at": "2026-02-24T18:57:12.962846+00:00",
+      "finished_at": "2026-02-24T19:05:28.037348+00:00"
+    },
+    {
+      "type": "test",
+      "title": "TEST: codex auto-run v2",
+      "description": "Write a short report.md confirming the test run. Include the phrase: CODEX AUTO OK. Then exit.",
+      "needs_agent": true,
+      "id": "94bb0f58",
+      "created_at": "2026-02-24T19:03:38.807518+00:00",
+      "status": "stopped_by_user",
+      "started_at": "2026-02-24T19:03:38.834363+00:00",
+      "finished_at": "2026-02-24T19:05:28.037348+00:00"
+    },
+    {
+      "type": "review",
+      "title": "Daily review: Web portal",
+      "description": "Review block: Web portal\nPaths: code/web_portal/\nFocus: Rendering, performance, search, materials.\nDeliverable: short notes in journal + any concrete fixes to propose.",
+      "needs_agent": true,
+      "id": "d62e4428",
+      "created_at": "2026-02-24T19:05:48.631362+00:00",
+      "status": "auto_closed",
+      "started_at": "2026-02-24T19:05:48.666646+00:00",
+      "finished_at": "2026-02-24T19:19:06.822992+00:00"
+    },
+    {
+      "type": "review",
+      "title": "Daily review: Scripts + ops",
+      "description": "Review block: Scripts + ops\nPaths: code/scripts/\nFocus: Automation, safety, idempotency, logs.\nDeliverable: short notes in journal + any concrete fixes to propose.",
+      "needs_agent": true,
+      "id": "1cdb5a07",
+      "created_at": "2026-02-24T19:23:53.780234+00:00",
+      "status": "auto_closed",
+      "started_at": "2026-02-24T19:23:53.803060+00:00",
+      "finished_at": "2026-02-24T19:33:09.619849+00:00"
+    },
+    {
+      "type": "review",
+      "title": "Daily review: Docs + journals",
+      "description": "Review block: Docs + journals\nPaths: notes/\nFocus: BIBLE alignment, evidence trails, summaries.\nDeliverable: short notes in journal + any concrete fixes to propose.",
+      "needs_agent": true,
+      "id": "0cd4525c",
+      "created_at": "2026-02-24T19:38:56.470822+00:00",
+      "status": "auto_closed",
+      "started_at": "2026-02-24T19:38:56.496550+00:00",
+      "finished_at": "2026-02-24T19:53:08.610750+00:00"
+    },
+    {
+      "type": "review",
+      "title": "Daily review: Firmware core",
+      "description": "Review block: Firmware core\nPaths: code/firmware/\nFocus: Stability, I2S/audio, inference loop, logging.\nDeliverable: short notes in journal + any concrete fixes to propose.",
+      "needs_agent": true,
+      "id": "1500cd2d",
+      "created_at": "2026-02-24T19:53:59.479862+00:00",
+      "status": "auto_closed",
+      "started_at": "2026-02-24T19:53:59.516787+00:00",
+      "finished_at": "2026-02-24T20:05:19.873055+00:00"
+    },
+    {
+      "type": "review",
+      "title": "Daily review: Training + analysis",
+      "description": "Review block: Training + analysis\nPaths: code/training/, code/analysis/\nFocus: Reproducibility, metrics, artifacts, notebooks.\nDeliverable: short notes in journal + any concrete fixes to propose.",
+      "needs_agent": true,
+      "id": "9f0782c2",
+      "created_at": "2026-02-24T20:09:03.727832+00:00",
+      "status": "auto_closed",
+      "started_at": "2026-02-24T20:09:03.762130+00:00",
+      "finished_at": "2026-02-24T20:11:25.525761+00:00"
+    }
+  ]
+}

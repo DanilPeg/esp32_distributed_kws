@@ -1,0 +1,22 @@
+﻿date: 2026-02-24
+session_id: agent_ouroboros_015
+goal: Add quiet-hours guard for auto-scheduled tasks (after 02:00 MSK)
+inputs:
+  - user instruction: do not create new tasks after 02:00 MSK
+actions:
+  - added quiet_hours_msk config and gating in runner
+  - added MSK time helpers in utils
+  - updated BIBLE with quiet-hours rule
+results:
+  - evolution auto-scheduling is suppressed during MSK quiet hours
+artifacts:
+  - code/agent/agent_config.json
+  - code/agent/utils.py
+  - code/agent/runner.py
+  - BIBLE.md
+tests:
+  - python -m py_compile code/agent/runner.py code/agent/utils.py
+next:
+  - confirm quiet-hours end time if different from 08:00 MSK
+open_questions:
+  - should manual /task be blocked during quiet hours too?

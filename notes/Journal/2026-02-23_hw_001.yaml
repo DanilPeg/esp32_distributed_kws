@@ -1,0 +1,23 @@
+date: 2026-02-23
+session_id: telegram
+goal: фиксировать текущий инвентарь железа
+inputs:
+  - source: Telegram (neural_md)
+    items:
+      - ESP32-S3 x3
+      - ESP32-C3-Mini x2
+      - MEMS I2S NMP441 x3
+      - MEMS I2S (similar model) x1 (model уточнить)
+decisions:
+  - создать отдельный файл инвентаря в notes/Research
+actions:
+  - created notes/Research/hardware_inventory.md
+results:
+  - inventory snapshot saved
+artifacts:
+  - notes/Research/hardware_inventory.md
+tests: []
+next:
+  - уточнить модель 4-го микрофона
+open_questions:
+  - точная маркировка похожего MEMS I2S микрофона

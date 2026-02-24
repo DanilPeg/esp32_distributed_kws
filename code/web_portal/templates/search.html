@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel">
+  <h2>Search Materials</h2>
+  <form class="search-form" method="get" action="/search">
+    <input type="text" name="q" placeholder="Search by file name or content..." value="{{ query }}" />
+    <button class="btn" type="submit">Search</button>
+  </form>
+  {% if query %}
+    <div class="small">Results: {{ count }}</div>
+    <div class="list">
+      {% for r in results %}
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">{{ r.name }}</div>
+            <div class="row-meta">{{ r.rel_path }} | {{ r.reason }}</div>
+            {% if r.snippet %}
+              <div class="snippet">{{ r.snippet }}</div>
+            {% endif %}
+          </div>
+          <a class="btn" href="/view?path={{ r.url_path }}">Open</a>
+        </div>
+      {% endfor %}
+      {% if results|length == 0 %}
+        <div class="empty">No matches.</div>
+      {% endif %}
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,19 @@
+date: 2026-02-24
+session_id: cli
+goal: prevent sleep by keep-awake helper
+inputs:
+  - user request: keep laptop awake by moving mouse every ~2 minutes
+
+decisions:
+  - create keep_awake.py script in code/scripts
+  - start it in background with 120s interval
+
+actions:
+  - created code/scripts/keep_awake.py
+  - launched keep_awake.py (hidden window)
+results:
+  - keep-awake helper running
+artifacts:
+  - code/scripts/keep_awake.py
+open_questions:
+  - none

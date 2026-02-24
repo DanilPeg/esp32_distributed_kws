@@ -1,0 +1,17 @@
+date: 2026-02-24
+session_id: telegram_008
+goal: Check Telegram inbox for new messages
+inputs:
+  - User request: "Telegram: new message. Check inbox.jsonl."
+actions:
+  - Read tail of notes/Journal/telegram/inbox.jsonl
+results:
+  - No new message from @RichardTman; latest entries are from Danil
+artifacts:
+  - notes/Journal/telegram/inbox.jsonl
+tests:
+  - Not run
+next:
+  - Wait for Richard to /start the bot or provide chat_id
+open_questions:
+  - None

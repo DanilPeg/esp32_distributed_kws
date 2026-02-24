@@ -1,0 +1,10 @@
+{
+  "type": "review",
+  "title": "Daily review: Firmware core",
+  "description": "Review block: Firmware core\nPaths: code/firmware/\nFocus: Stability, I2S/audio, inference loop, logging.\nDeliverable: short notes in journal + any concrete fixes to propose.",
+  "needs_agent": true,
+  "id": "b7530fc8",
+  "created_at": "2026-02-24T18:18:16.842361+00:00",
+  "status": "running",
+  "started_at": "2026-02-24T18:21:03.169946+00:00"
+}

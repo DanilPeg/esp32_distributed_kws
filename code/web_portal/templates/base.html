@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agi Diploma Project</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="bg"></div>
+  <header class="topbar">
+    <div class="brand">Agi Diploma Project</div>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/bible">BIBLE</a>
+      <a href="/roadmap">Roadmap</a>
+      <a href="/research">Documents</a>
+      <a href="/browse">Materials</a>
+      <a href="/articles">Articles</a>
+      <a href="/search">Search</a>
+      <a href="/summary">Daily Summary</a>
+      <a href="/journal">Journal</a>
+    </nav>
+  </header>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="footer">Hosted locally. Read-only.</footer>
+</body>
+</html>

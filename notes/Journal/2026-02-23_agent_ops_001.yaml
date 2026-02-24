@@ -1,0 +1,21 @@
+date: 2026-02-23
+session_id: telegram
+goal: research agent self-improvement (BIBLE updates, journaling, wrapper)
+inputs:
+  - sources: ReAct, Reflexion, MemGPT, Tree-of-Thoughts, RAG
+  - request: improve BIBLE/journals/wrapper process
+decisions:
+  - create research note with sources and proposed process changes
+  - add a concise Self-Improvement section to BIBLE
+actions:
+  - created notes/Research/agent_self_improvement.md
+  - updated BIBLE.md to v0.9
+results:
+  - research note saved
+  - BIBLE includes self-improvement summary
+artifacts:
+  - notes/Research/agent_self_improvement.md
+  - BIBLE.md
+open_questions:
+  - approve implementation of context_pack.py wrapper
+  - define context budget and retrieval rules (keywords/priority)

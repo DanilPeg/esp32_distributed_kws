@@ -1,0 +1,35 @@
+﻿date: 2026-02-24
+session_id: cli
+goal: add separate daily summary page (RU), inline PDF viewer, rename landing title
+inputs:
+  - user request: summary in separate window, in Russian
+  - user request: PDFs open inline (no download)
+  - user request: rename landing title to Agi Diploma Project
+
+decisions:
+  - add /summary page reading notes/Journal/summaries/*.md
+  - use inline Content-Disposition for PDFs and embed via iframe
+
+actions:
+  - added /summary route and template summary.html
+  - removed summaries from Journal page
+  - added PDF inline viewer route /research/view/{name}
+  - updated Research list to open inline viewer
+  - updated base + index titles to Agi Diploma Project
+  - updated daily summary content to Russian for 2026-02-24
+  - normalized BIBLE line breaks and kept v1.15
+results:
+  - summary page separate from journal
+  - PDFs render inline in portal
+artifacts:
+  - code/web_portal/app.py
+  - code/web_portal/templates/summary.html
+  - code/web_portal/templates/research_view.html
+  - code/web_portal/templates/research.html
+  - code/web_portal/templates/index.html
+  - code/web_portal/templates/base.html
+  - code/web_portal/static/styles.css
+  - notes/Journal/summaries/2026-02-24.md
+  - BIBLE.md
+open_questions:
+  - verify summary page and inline PDFs via ngrok URL

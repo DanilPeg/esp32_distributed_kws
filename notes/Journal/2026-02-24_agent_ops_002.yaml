@@ -1,0 +1,21 @@
+date: 2026-02-24
+session_id: telegram
+goal: condense BIBLE and move team norms to separate file
+inputs:
+  - user decision: apply A,B,D,E (condense BIBLE, move deadlines/next steps to checkpoint, move team norms out, add eval-driven evolution)
+
+decisions:
+  - rewrite BIBLE in English-only, remove Cyrillic file names to avoid encoding issues
+  - move team norms to notes/Team_rules.md
+
+actions:
+  - updated BIBLE.md to v1.9 (condensed, eval-driven evolution, cold-start procedure)
+  - created notes/Team_rules.md
+results:
+  - BIBLE now within size target and ASCII-only
+  - team norms stored outside BIBLE
+artifacts:
+  - BIBLE.md
+  - notes/Team_rules.md
+open_questions:
+  - confirm BIBLE wording and whether to add any response-format guidance

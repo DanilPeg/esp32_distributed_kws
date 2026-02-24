@@ -1,0 +1,29 @@
+date: 2026-02-24
+session_id: cli
+goal: implement web portal skeleton (BIBLE/PDFs/journals) with auth
+inputs:
+  - user requirements: external access via ngrok, hashed password, web-to-CLI later
+
+decisions:
+  - FastAPI + Jinja2 + Markdown rendering
+  - password hash stored in code/scripts/web_portal.env (gitignored)
+
+actions:
+  - created code/web_portal/app.py and templates/static
+  - added code/web_portal/README.md
+  - added code/scripts/make_web_password.py
+  - updated BIBLE.md to v1.13 (web portal details)
+  - updated .gitignore to ignore code/scripts/web_portal.env
+results:
+  - portal skeleton ready; needs dependency install and password hash
+artifacts:
+  - code/web_portal/app.py
+  - code/web_portal/templates/*.html
+  - code/web_portal/static/styles.css
+  - code/web_portal/README.md
+  - code/scripts/make_web_password.py
+  - BIBLE.md
+  - .gitignore
+open_questions:
+  - secret word for password hash
+  - ngrok install/availability

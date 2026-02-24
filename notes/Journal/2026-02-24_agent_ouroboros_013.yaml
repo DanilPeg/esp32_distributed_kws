@@ -1,0 +1,26 @@
+﻿date: 2026-02-24
+session_id: agent_ouroboros_013
+goal: Enable deeper tasks with code edits and publish framework article
+inputs:
+  - user request: allow deep tasks with code edits on branches
+  - code/agent/agent_config.json
+  - BIBLE.md
+actions:
+  - Added per-task git branch preparation (skips if repo lacks .git).
+  - Updated prompts to allow code edits and forbid auto-merge.
+  - Added framework article to web portal and updated articles index.
+  - Updated BIBLE with branch rule and /task command entry.
+results:
+  - Agent can operate in per-task branches when git is initialized; article published.
+artifacts:
+  - code/agent/executor.py
+  - code/agent/agent_config.json
+  - BIBLE.md
+  - notes/Research/articles/agent-framework-runtime.md
+  - notes/Research/articles/index.json
+tests:
+  - python -m py_compile code/agent/executor.py
+next:
+  - Decide whether to init git repo to enable branch workflow.
+open_questions:
+  - Should we create git worktrees for isolation?

@@ -1,0 +1,36 @@
+﻿{
+  "articles": [
+    {
+      "slug": "agent-framework-runtime",
+      "title": "Как работает наш агентный фреймворк: память, эволюция и контроль качества",
+      "date": "2026-02-24",
+      "read_time": "18 мин",
+      "excerpt": "Подробный разбор нашей агентной инфраструктуры: BIBLE, журналы, эволюционный цикл, очередь задач, Codex exec и правила безопасных правок.",
+      "cover_path": "images/figures/articles/cover_agents.svg"
+    },
+    {
+      "slug": "distributed-esp32-research",
+      "title": "Большой обзор исследований по теме диплома: распределённый ИИ на ESP32",
+      "date": "2026-02-24",
+      "read_time": "30 мин",
+      "excerpt": "Системный обзор распределённого инференса на ESP32: модель системы, методология экспериментов, метрики и доказательная база.",
+      "cover_path": "images/figures/articles/cover_distributed.svg"
+    },
+    {
+      "slug": "self-improving-agents",
+      "title": "Самоулучшение агентных систем: методы, критика и прикладной синтез",
+      "date": "2026-02-24",
+      "read_time": "24 мин",
+      "excerpt": "Разбор методов самоулучшения агентных систем с привязкой к нашему workflow, артефактам и дисциплине качества.",
+      "cover_path": "images/figures/articles/cover_agents.svg"
+    },
+    {
+      "slug": "esp32-microcontrollers-deep-dive",
+      "title": "ESP32S3 и периферия: инженерный разбор для on-device ИИ",
+      "date": "2026-02-24",
+      "read_time": "22 мин",
+      "excerpt": "Практический инженерный разбор ESP32S3: ограничения, аудио‑пайплайн, диагностика, воспроизводимость и артефакты.",
+      "cover_path": "images/figures/articles/cover_microcontrollers.svg"
+    }
+  ]
+}

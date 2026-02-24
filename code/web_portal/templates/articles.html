@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel">
+  <div class="articles-header">
+    <div>
+      <div class="articles-title">Articles</div>
+      <div class="articles-sub">Глубокие разборы по теме диплома и агентных процессов.</div>
+    </div>
+  </div>
+  <div class="articles-grid">
+    {% for a in items %}
+      <article class="article-card">
+        {% if a.cover_path %}
+          <div class="article-cover">
+            <img src="/file?path={{ a.cover_path }}" alt="{{ a.title }}">
+          </div>
+        {% endif %}
+        <div class="article-body">
+          <div class="article-title">{{ a.title }}</div>
+          <div class="article-meta">{{ a.date }} · {{ a.read_time }}</div>
+          <div class="article-excerpt">{{ a.excerpt }}</div>
+        </div>
+        <a class="btn" href="/articles/{{ a.slug }}">Read</a>
+      </article>
+    {% endfor %}
+    {% if items|length == 0 %}
+      <div class="empty">Пока нет статей.</div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel">
+  <h2>Materials Browser</h2>
+  {% if current_path %}
+    <div class="row">
+      <div class="row-main">
+        <div class="row-title">{{ current_path }}</div>
+        <div class="row-meta">Read-only</div>
+      </div>
+      <a class="btn" href="/browse">Root</a>
+      <a class="btn" href="/browse?path={{ current_path }}">Refresh</a>
+    </div>
+    <div class="list">
+      {% for d in dirs %}
+        <div class="row">
+          <div class="row-main">
+          <div class="row-title">[DIR] {{ d }}</div>
+          </div>
+          <a class="btn" href="/browse?path={{ current_path }}/{{ d }}">Open</a>
+        </div>
+      {% endfor %}
+      {% for f in files %}
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">{{ f }}</div>
+          </div>
+          <a class="btn" href="/view?path={{ current_path }}/{{ f }}">View</a>
+        </div>
+      {% endfor %}
+      {% if dirs|length == 0 and files|length == 0 %}
+        <div class="empty">Empty directory.</div>
+      {% endif %}
+    </div>
+  {% elif roots|length > 0 %}
+    <div class="list">
+      {% for r in roots %}
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">{{ r }}</div>
+          </div>
+          <a class="btn" href="/browse?path={{ r }}">Open</a>
+        </div>
+      {% endfor %}
+      {% if roots|length == 0 %}
+        <div class="empty">No roots configured.</div>
+      {% endif %}
+    </div>
+  {% else %}
+    <div class="row">
+      <div class="row-main">
+        <div class="row-title">Repo root</div>
+        <div class="row-meta">Read-only</div>
+      </div>
+      <a class="btn" href="/browse">Refresh</a>
+    </div>
+    <div class="list">
+      {% for d in dirs %}
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">[DIR] {{ d }}</div>
+          </div>
+          <a class="btn" href="/browse?path={{ d }}">Open</a>
+        </div>
+      {% endfor %}
+      {% for f in files %}
+        <div class="row">
+          <div class="row-main">
+            <div class="row-title">{{ f }}</div>
+          </div>
+          <a class="btn" href="/view?path={{ f }}">View</a>
+        </div>
+      {% endfor %}
+      {% if dirs|length == 0 and files|length == 0 %}
+        <div class="empty">Empty directory.</div>
+      {% endif %}
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

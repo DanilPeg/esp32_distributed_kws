@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel">
+  <div class="row">
+    <div class="row-main">
+      <div class="row-title">{{ name }}</div>
+      <div class="row-meta">{{ rel_path }}</div>
+    </div>
+    <a class="btn" href="/file?path={{ url_path }}">Download</a>
+  </div>
+
+  {% if kind == 'image' %}
+    <div class="media-box">
+      <img src="/file?path={{ url_path }}" alt="{{ name }}" />
+    </div>
+  {% elif kind == 'pdf' %}
+    <div class="pdf-frame">
+      <iframe src="/file?path={{ url_path }}" title="{{ name }}"></iframe>
+    </div>
+  {% elif kind == 'text' %}
+    <pre class="code"><code class="hljs language-{{ language }}">{{ content }}</code></pre>
+  {% else %}
+    <div class="empty">Preview not available for this file type.</div>
+  {% endif %}
+</section>
+
+<link rel="stylesheet" href="/static/hljs/github-dark.min.css">
+<script src="/static/hljs/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+{% endblock %}

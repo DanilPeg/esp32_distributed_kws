@@ -1,0 +1,26 @@
+date: 2026-02-24
+session_id: agent_codex_0cd4525c
+goal: Daily review of docs and journals (BIBLE alignment, evidence trails, summaries)
+inputs:
+  - notes/Journal/summaries/2026-02-24.md
+  - notes/Journal/2026-02-24_checkpoint_001.yaml
+  - notes/Research/micro_speech_baseline_2026-02-24_summary.md
+  - notes/Journal/2026-02-24_hw_ops_005.yaml
+  - notes/Journal/*.yaml (BOM scan)
+actions:
+  - Reviewed latest daily summary and baseline evidence trail references.
+  - Scanned Journal YAML files for UTF-8 BOM in headers.
+results:
+  - Many Journal YAML files are UTF-8 with BOM, which can break strict YAML parsing.
+  - Baseline micro_speech evidence exists as summarized observations, but no raw serial log file is linked.
+artifacts:
+  - notes/Journal/summaries/2026-02-24.md
+  - notes/Research/micro_speech_baseline_2026-02-24_summary.md
+  - notes/Journal/2026-02-24_hw_ops_005.yaml
+tests:
+  - Not run (review only).
+next:
+  - Decide whether to strip BOM from Journal YAMLs and enforce UTF-8 no BOM on writes.
+  - If baseline logs are important, capture raw serial output to a file and link it from Journal.
+open_questions:
+  - Should daily summaries include explicit evidence links per major claim?

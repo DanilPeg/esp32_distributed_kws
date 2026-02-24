@@ -1,0 +1,20 @@
+date: 2026-02-24
+session_id: cli
+goal: plan external web portal for BIBLE/PDFs/journals
+inputs:
+  - user requirements: external access, password auth (hash), web-to-CLI later
+
+decisions:
+  - prefer tunnel-based external access
+  - use hashed password (not stored in repo plaintext)
+  - update BIBLE with Web Portal requirements
+
+actions:
+  - updated BIBLE.md to v1.12 (Web Portal section)
+results:
+  - requirements recorded in BIBLE
+artifacts:
+  - BIBLE.md
+open_questions:
+  - tunnel provider choice (ngrok vs cloudflared vs other)
+  - secret word for hashing

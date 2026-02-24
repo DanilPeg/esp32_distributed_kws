@@ -1,0 +1,15 @@
+﻿date: 2026-02-24
+session_id: cli
+goal: ensure cold-start agent can run web portal
+inputs:
+  - user question about cold-start agent understanding site operation
+
+actions:
+  - updated BIBLE.md to v1.19 with web portal quickstart + run command
+results:
+  - BIBLE now contains explicit run steps and README pointer
+artifacts:
+  - BIBLE.md
+  - notes/Journal/2026-02-24_web_015.yaml
+open_questions:
+  - none

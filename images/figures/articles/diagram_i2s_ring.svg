@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560">
+  <defs>
+    <linearGradient id="bgi" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#0b1220"/>
+    </linearGradient>
+    <linearGradient id="acci" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#62f0b7"/>
+      <stop offset="1" stop-color="#7aa2ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="560" fill="url(#bgi)"/>
+  <circle cx="600" cy="280" r="180" fill="none" stroke="url(#acci)" stroke-width="12"/>
+  <circle cx="600" cy="280" r="120" fill="#0b1220" stroke="#1f2937" stroke-width="4"/>
+  <path d="M600 100 L630 140 L600 130 L570 140 Z" fill="#62f0b7"/>
+  <text x="540" y="90" fill="#e5e7eb" font-family="Space Grotesk, Arial" font-size="16">Write Pointer</text>
+  <path d="M600 460 L630 420 L600 430 L570 420 Z" fill="#7aa2ff"/>
+  <text x="540" y="480" fill="#e5e7eb" font-family="Space Grotesk, Arial" font-size="16">Read Pointer</text>
+  <text x="360" y="280" fill="#9aa3b2" font-family="Space Grotesk, Arial" font-size="18">Ring Buffer</text>
+  <text x="280" y="520" fill="#9aa3b2" font-family="Space Grotesk, Arial" font-size="16">If write catches read => overflow, dropped audio</text>
+</svg>

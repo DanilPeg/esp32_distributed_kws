@@ -1,0 +1,24 @@
+date: 2026-02-23
+session_id: cli
+goal: enable mic-less micro_speech test and document hardware ops
+inputs:
+  - request: simulate mic input and make hardware usage autonomous
+  - device: ESP32-S3 on COM6
+decisions:
+  - add fake mic mode to micro_speech_sim
+  - write hardware ops playbook and reference in BIBLE
+actions:
+  - updated code/firmware/micro_speech_sim/audio_provider.cpp (USE_FAKE_MIC=1)
+  - updated code/firmware/micro_speech_sim/README.md (simulation note)
+  - created notes/Research/hardware_ops_playbook.md
+  - updated BIBLE.md to v1.3
+results:
+  - micro_speech can run without physical mic (simulated audio)
+  - hardware procedure documented
+artifacts:
+  - code/firmware/micro_speech_sim/audio_provider.cpp
+  - code/firmware/micro_speech_sim/README.md
+  - notes/Research/hardware_ops_playbook.md
+  - BIBLE.md
+open_questions:
+  - confirm whether to keep USE_FAKE_MIC=1 after baseline tests

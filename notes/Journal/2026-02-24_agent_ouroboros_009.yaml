@@ -1,0 +1,28 @@
+﻿date: 2026-02-24
+session_id: agent_ouroboros_009
+goal: Auto-run Codex tasks in separate sessions with prompts and auto-close
+inputs:
+  - user request: auto-run Codex sessions
+  - code/agent/agent_config.json
+  - notes/Journal/agent/queue.json
+actions:
+  - Added prompt generation and codex exec output/log paths per task.
+  - Extended start_codex_session.ps1 to accept prompt/task/log/out params and run codex exec with stdin.
+  - Launched codex exec for current running tasks.
+  - Fixed script param placement to avoid parser errors.
+results:
+  - Running tasks now spawn codex exec with prompt and will auto-close on completion.
+artifacts:
+  - code/agent/executor.py
+  - code/scripts/start_codex_session.ps1
+  - notes/Journal/agent/README.md
+  - notes/Journal/agent/tasks/*/prompt.txt
+  - notes/Journal/agent/tasks/*/codex_exec.log
+  - notes/Journal/agent/tasks/*/codex_last.md
+tests:
+  - python -m py_compile code/agent/executor.py code/agent/runner.py code/agent/notify.py code/agent/queue.py code/agent/state.py
+next:
+  - Confirm codex exec outputs in task workspaces.
+  - Review auto-closed tasks for report.md.
+open_questions:
+  - Should codex exec output be summarized into journal automatically?

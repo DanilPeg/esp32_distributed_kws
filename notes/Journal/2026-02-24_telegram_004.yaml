@@ -1,0 +1,13 @@
+﻿date: 2026-02-24
+session_id: cli
+goal: acknowledge Telegram research task and start
+inputs:
+  - Telegram /ask: no constraints, start research
+
+actions:
+  - sent confirmation reply
+artifacts:
+  - notes/Journal/telegram/_tg_reply.txt
+  - notes/Journal/telegram/outbox.jsonl
+open_questions:
+  - none

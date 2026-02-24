@@ -1,0 +1,19 @@
+﻿date: 2026-02-24
+session_id: agent_ouroboros_004
+goal: Enable auto-start Codex sessions within limits
+inputs:
+  - code/agent/agent_config.json
+decisions:
+  - Allow auto_start_codex for queued tasks; rely on CODEX_MAX_SESSIONS (default 3) in start_codex_session.ps1.
+actions:
+  - Set auto_start_codex=true in agent_config.json.
+results:
+  - Auto-start Codex will trigger for future queued tasks.
+artifacts:
+  - code/agent/agent_config.json
+tests:
+  - Not run
+next:
+  - Observe next queued task to confirm auto-start respects session cap.
+open_questions:
+  - Should we set CODEX_MAX_SESSIONS explicitly in telegram_commands.env?

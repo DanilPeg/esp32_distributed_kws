@@ -1,0 +1,17 @@
+﻿date: 2026-02-24
+session_id: telegram_012
+goal: Explain /agent run result (no visible reaction) in Telegram
+inputs:
+  - notes/Journal/telegram/inbox.jsonl
+  - notes/Journal/agent/queue.json
+actions:
+  - Sent explanation: task queued; auto_process_queue disabled; how to run executor
+artifacts:
+  - notes/Journal/telegram/reply_agent_cycle_info.txt
+  - notes/Journal/telegram/outbox.jsonl
+tests:
+  - Not run
+next:
+  - If requested, enable auto_process_queue and run executor
+open_questions:
+  - Should we auto-start Codex for each queued task?

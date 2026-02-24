@@ -1,0 +1,30 @@
+﻿date: 2026-02-24
+session_id: agent_ouroboros_007
+goal: Support codex args + auto-close policy for tasks
+inputs:
+  - user request: use codex --dangerously-bypass-approvals-and-sandbox
+  - notes/Journal/agent/queue.json
+  - code/scripts/telegram_commands.env
+actions:
+  - Extended start_codex_session.ps1 to support CODEX_ARGS and split command+args.
+  - Set CODEX_ARGS to --dangerously-bypass-approvals-and-sandbox in telegram_commands.env.
+  - Added auto-close policy (codex_or_idle) and idle threshold in agent_config.
+  - Fixed runner import indentation bug and restarted loop.
+results:
+  - Auto-start uses codex with provided args.
+  - Tasks can auto-close when codex started or after idle threshold.
+artifacts:
+  - code/scripts/start_codex_session.ps1
+  - code/scripts/telegram_commands.env
+  - code/scripts/telegram_commands.env.example
+  - code/agent/runner.py
+  - code/agent/queue.py
+  - code/agent/state.py
+  - code/agent/notify.py
+  - code/agent/agent_config.json
+tests:
+  - python -m py_compile code/agent/runner.py code/agent/notify.py code/agent/queue.py code/agent/executor.py code/agent/state.py
+next:
+  - Verify Codex windows appear (or switch to Windows Terminal tabs if needed).
+open_questions:
+  - Prefer spawning Windows Terminal tabs instead of new PowerShell windows?

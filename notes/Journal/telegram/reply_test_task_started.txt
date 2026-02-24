@@ -1,0 +1,4 @@
+﻿Запустил тестовую таску для проверки автозапуска Codex.
+ID: 5af1b9ac
+Ожидаемый артефакт: notes/Journal/agent/tasks/5af1b9ac/report.md
+Также логи: codex_exec.log и codex_last.md в этой же папке.

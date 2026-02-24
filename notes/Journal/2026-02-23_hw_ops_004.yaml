@@ -1,0 +1,19 @@
+date: 2026-02-23
+session_id: telegram
+goal: capture Sergey report on microcontroller speech command test
+inputs:
+  - report: "ESP32-S3 + same mic/sketch as Danil; recognition of 4 classes (yes/no/silence/unknown) unstable but works"
+  - sender: Sergey (@sirezya)
+decisions:
+  - request logs and reproducible details before treating as verified
+actions:
+  - asked for serial log, build info, model/version, environment, and test protocol
+results:
+  - pending evidence from Sergey
+artifacts:
+  - notes/Journal/telegram/inbox.jsonl (update_id 316825707)
+open_questions:
+  - exact sketch/path and commit/version
+  - board package + framework version
+  - mic model, wiring, power, environment
+  - metrics (counts, accuracy, confusion, latency)

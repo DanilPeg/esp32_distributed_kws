@@ -1,0 +1,81 @@
+{
+  "max_codex_sessions_total": 3,
+  "max_additional_workers": 2,
+  "evolution_enabled": true,
+  "autonomous_apply": false,
+  "auto_process_queue": true,
+  "auto_start_codex": true,
+  "auto_mark_done": false,
+  "max_tasks_per_cycle": 1,
+  "evolution_interval_minutes": 15,
+  "quiet_hours_msk": {
+    "start": "02:00",
+    "end": "08:00"
+  },
+  "health_check_interval_minutes": 60,
+  "notify_telegram": true,
+  "context_pack_enabled": true,
+  "context_pack_journal_count": 2,
+  "context_pack_max_snippets": 7,
+  "context_pack_context_lines": 2,
+  "context_pack_query": "",
+  "start_codex_script": "",
+  "review_blocks": [
+    {
+      "id": 0,
+      "name": "Firmware core",
+      "paths": [
+        "code/firmware/"
+      ],
+      "focus": "Stability, I2S/audio, inference loop, logging."
+    },
+    {
+      "id": 1,
+      "name": "Training + analysis",
+      "paths": [
+        "code/training/",
+        "code/analysis/"
+      ],
+      "focus": "Reproducibility, metrics, artifacts, notebooks."
+    },
+    {
+      "id": 2,
+      "name": "Protocol + shared",
+      "paths": [
+        "code/protocol/",
+        "code/shared/"
+      ],
+      "focus": "Message formats, consistency, utilities."
+    },
+    {
+      "id": 3,
+      "name": "Web portal",
+      "paths": [
+        "code/web_portal/"
+      ],
+      "focus": "Rendering, performance, search, materials."
+    },
+    {
+      "id": 4,
+      "name": "Scripts + ops",
+      "paths": [
+        "code/scripts/"
+      ],
+      "focus": "Automation, safety, idempotency, logs."
+    },
+    {
+      "id": 5,
+      "name": "Docs + journals",
+      "paths": [
+        "notes/"
+      ],
+      "focus": "BIBLE alignment, evidence trails, summaries."
+    }
+  ],
+  "telegram_report_chat_id": "",
+  "telegram_report_on_cycle": true,
+  "auto_close_mode": "codex_or_idle",
+  "auto_close_idle_minutes": 30,
+  "git_branch_mode": "per_task",
+  "git_branch_prefix": "agent/task"
+}

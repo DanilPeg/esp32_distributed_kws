@@ -1,0 +1,21 @@
+﻿date: 2026-02-24
+session_id: cli
+goal: fix missing syntax highlighting
+inputs:
+  - user report: no code highlighting
+
+decisions:
+  - host highlight.js assets locally to avoid CDN blocks
+
+actions:
+  - downloaded highlight.js + github-dark CSS to code/web_portal/static/hljs
+  - updated view.html to use local assets
+  - restarted uvicorn
+results:
+  - code highlighting should render for /view pages
+artifacts:
+  - code/web_portal/static/hljs/highlight.min.js
+  - code/web_portal/static/hljs/github-dark.min.css
+  - code/web_portal/templates/view.html
+open_questions:
+  - confirm highlighting now visible

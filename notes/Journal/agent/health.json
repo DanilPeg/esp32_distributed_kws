@@ -1,0 +1,26 @@
+{
+  "last_check": "2026-02-24T19:18:53.223865+00:00",
+  "status": "warn",
+  "checks": [
+    {
+      "check": "portal_stdout_recent",
+      "status": "ok",
+      "detail": "age_min=0"
+    },
+    {
+      "check": "portal_stderr_recent",
+      "status": "warn",
+      "detail": "age_min=125"
+    },
+    {
+      "check": "portal_watchdog_recent",
+      "status": "ok",
+      "detail": "age_min=12"
+    },
+    {
+      "check": "daily_summary_present",
+      "status": "ok",
+      "detail": "age_min=23"
+    }
+  ]
+}

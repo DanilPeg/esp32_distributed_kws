@@ -1,0 +1,23 @@
+﻿date: 2026-02-24
+session_id: agent_ouroboros_002
+goal: Fix Telegram /agent run ImportError when runner invoked as script
+inputs:
+  - notes/Journal/telegram/inbox.jsonl (error report)
+decisions:
+  - Add fallback import path for runner/executor when executed as script.
+actions:
+  - Added try/except import bootstraps in code/agent/runner.py and code/agent/executor.py.
+  - Replied in Telegram with retry instructions.
+results:
+  - runner/executor can be invoked directly via python file path.
+artifacts:
+  - code/agent/runner.py
+  - code/agent/executor.py
+  - notes/Journal/telegram/reply_agent_run_fix.txt
+  - notes/Journal/telegram/outbox.jsonl
+tests:
+  - python -m py_compile code/agent/runner.py code/agent/executor.py
+next:
+  - Wait for /agent run confirmation.
+open_questions:
+  - Should we switch telegram command to run module path instead of file?

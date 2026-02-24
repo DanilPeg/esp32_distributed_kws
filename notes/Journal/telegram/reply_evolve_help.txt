@@ -1,0 +1,4 @@
+﻿/evolve без аргументов показывает статус.
+Чтобы включить эволюцию: /evolve on
+Дальше нужно запустить цикл (один раз /agent run или локально: python code/agent/runner.py watch --interval 300).
+Если хочешь автоподготовку задач и автозапуск Codex — включи auto_process_queue=true и auto_start_codex=true в code/agent/agent_config.json.

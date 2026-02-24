@@ -1,0 +1,32 @@
+﻿date: 2026-02-24
+session_id: cli
+goal: add rich articles to web portal and embed on homepage
+inputs:
+  - Telegram request: create three detailed articles with images and links
+
+decisions:
+  - store articles in notes/Research/articles with index.json metadata
+  - add /articles list + /articles/{slug} pages and show featured on home
+
+actions:
+  - added article routes and templates (articles list + article page)
+  - created three long-form RU articles with internal links
+  - added cover SVGs in images/figures/articles
+  - updated homepage to show featured articles
+  - updated CSS for article layout
+  - added articles path to BIBLE (v1.22) and README
+  - restarted uvicorn
+results:
+  - articles visible on home and /articles
+artifacts:
+  - notes/Research/articles/index.json
+  - notes/Research/articles/*.md
+  - images/figures/articles/*.svg
+  - code/web_portal/templates/articles.html
+  - code/web_portal/templates/article.html
+  - code/web_portal/templates/index.html
+  - code/web_portal/static/styles.css
+  - code/web_portal/app.py
+  - BIBLE.md
+open_questions:
+  - confirm article styling and content depth

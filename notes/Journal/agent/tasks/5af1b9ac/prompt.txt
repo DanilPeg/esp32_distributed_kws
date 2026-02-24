@@ -1,0 +1,20 @@
+You are running a non-interactive Codex task.
+Repo: C:\Users\Danil\diploma_esp32_distributed_nn
+Task id: 5af1b9ac
+Title: TEST: codex auto-run
+
+Description:
+Write a short report.md confirming the test run. Include the phrase: CODEx AUTO OK. Then exit.
+
+Workspace files:
+- task.md: C:\Users\Danil\diploma_esp32_distributed_nn\notes\Journal\agent\tasks\5af1b9ac\task.md
+- context_pack.md: C:\Users\Danil\diploma_esp32_distributed_nn\notes\Journal\agent\tasks\5af1b9ac\context_pack.md
+
+Instructions:
+1) Read task.md and context_pack.md (if present).
+2) Focus on the paths described in the task.
+3) Produce a report in report.md with sections: Summary, Findings, Actions, Tests, Next.
+4) If you make code changes, keep them minimal and list them in the report.
+5) Do not edit BIBLE.md unless necessary for the task.
+6) Use UTF-8 markdown.
+Report path: C:\Users\Danil\diploma_esp32_distributed_nn\notes\Journal\agent\tasks\5af1b9ac\report.md

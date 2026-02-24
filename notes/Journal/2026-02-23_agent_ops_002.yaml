@@ -1,0 +1,21 @@
+date: 2026-02-23
+session_id: telegram
+goal: implement context pack tool and update BIBLE policies
+inputs:
+  - user request: manage context budget (256k cap) and checkpoint cadence
+decisions:
+  - add explicit context budget policy to BIBLE
+  - set checkpoint cadence: once per day or after milestones
+  - implement context pack script for retrieval
+actions:
+  - updated BIBLE.md to v1.1
+  - created code/scripts/context_pack.py
+results:
+  - context pack tool available
+  - BIBLE updated with budget + cadence
+artifacts:
+  - BIBLE.md
+  - code/scripts/context_pack.py
+open_questions:
+  - confirm desired context pack size limits
+  - confirm which keywords to prioritize for retrieval

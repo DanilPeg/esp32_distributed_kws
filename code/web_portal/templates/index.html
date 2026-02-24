@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>Agi Diploma Project</h1>
+  <p>Read-only access to the BIBLE, documents, daily summaries, and journal updates.</p>
+</section>
+
+<section class="energy-panel panel">
+  <div class="energy-header">
+    <div>
+      <div class="energy-title">Team Rules: Energy Drinks Counter</div>
+      <div class="energy-sub">Reset daily at 19:00 MSK</div>
+    </div>
+    <div class="energy-score">{{ team_rules.score_line if team_rules else 'Даня 0 : 0 Серёжа' }}</div>
+  </div>
+  <div class="energy-row">
+    <div class="energy-status">{{ team_rules.status_line if team_rules else 'Оценка не задана.' }}</div>
+    <div class="energy-timer">
+      <div class="timer-label">Countdown to reset (MSK)</div>
+      <div id="msk-countdown" class="timer-value">--:--:--</div>
+    </div>
+  </div>
+  <div class="energy-joke">{{ team_rules.message if team_rules else 'Ждем решения судьи.' }}</div>
+</section>
+
+<section class="roadmap-section">
+  <div class="roadmap-header-block">
+    <div>
+      <div class="roadmap-title">Roadmap (RU)</div>
+      <div class="roadmap-sub">Обновляй через `notes/Project_Proposal/roadmap_ru.json`</div>
+    </div>
+    <div class="roadmap-updated">{{ roadmap.updated if roadmap else '' }}</div>
+  </div>
+  {% if roadmap and roadmap.phases %}
+    <div class="roadmap-grid">
+      {% for p in roadmap.phases %}
+        <div class="roadmap-card status-{{ p.status }}">
+          <div class="roadmap-card-header">
+            <div class="roadmap-card-title">{{ p.title }}</div>
+            <div class="roadmap-card-status">{{ p.status_ru }}</div>
+          </div>
+          {% if p.goal %}
+            <div class="roadmap-card-goal">{{ p.goal }}</div>
+          {% endif %}
+          {% if p.get('items') %}
+            <ul class="roadmap-list">
+              {% for it in p.get('items') %}
+                <li>{{ it }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty">Нет данных роадмапы.</div>
+  {% endif %}
+</section>
+
+<section class="agent-panel panel">
+  <div class="agent-header">
+    <div>
+      <div class="agent-title">Agent Evolution Status</div>
+      <div class="agent-sub">Runtime queue + health snapshot</div>
+    </div>
+    <div class="agent-flag">{{ 'ENABLED' if agent_status and agent_status.enabled else 'OFF' }}</div>
+  </div>
+  <div class="agent-row">
+    <div>Pending: {{ agent_status.pending if agent_status else 0 }}</div>
+    <div>Running: {{ agent_status.running if agent_status else 0 }}</div>
+  </div>
+  <div class="agent-meta">Last evolution: {{ agent_status.last_evolution_at if agent_status else '-' }}</div>
+  <div class="agent-meta">Last health: {{ agent_status.last_health_check_at if agent_status else '-' }}</div>
+  <div class="agent-event">{{ agent_status.last_event if agent_status else '' }}</div>
+  <div class="agent-links">
+    <a class="btn" href="/view?path=notes/Journal/agent/events.jsonl">Open events log</a>
+    <a class="btn" href="/browse?path=notes/Journal/agent">Open agent folder</a>
+  </div>
+</section>
+
+<section class="articles-section">
+  <div class="articles-header">
+    <div>
+      <div class="articles-title">Featured Articles</div>
+      <div class="articles-sub">Подробные разборы и обзоры с ссылками на материалы.</div>
+    </div>
+    <a class="btn" href="/articles">All Articles</a>
+  </div>
+  <div class="articles-grid">
+    {% for a in articles %}
+      <article class="article-card">
+        {% if a.cover_path %}
+          <div class="article-cover">
+            <img src="/file?path={{ a.cover_path }}" alt="{{ a.title }}">
+          </div>
+        {% endif %}
+        <div class="article-body">
+          <div class="article-title">{{ a.title }}</div>
+          <div class="article-meta">{{ a.date }} · {{ a.read_time }}</div>
+          <div class="article-excerpt">{{ a.excerpt }}</div>
+        </div>
+        <a class="btn" href="/articles/{{ a.slug }}">Read</a>
+      </article>
+    {% endfor %}
+    {% if articles|length == 0 %}
+      <div class="empty">Статьи пока не добавлены.</div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="grid">
+  <div class="panel">
+    <h2>BIBLE</h2>
+    <p>Single source of rules and constraints for the agent.</p>
+    <a class="btn" href="/bible">Open BIBLE</a>
+  </div>
+  <div class="panel">
+    <h2>Research PDFs</h2>
+    <p>Primary sources, logs, and research artifacts.</p>
+    <a class="btn" href="/research">View PDFs</a>
+  </div>
+  <div class="panel">
+    <h2>Journal</h2>
+    <p>Latest checkpoint and recent updates.</p>
+    <div class="small">Latest checkpoint: {{ latest_checkpoint if latest_checkpoint else 'None' }}</div>
+    <a class="btn" href="/journal">Open Journal</a>
+  </div>
+  <div class="panel">
+    <h2>Global Plan</h2>
+    <p>High-level roadmap for the diploma project.</p>
+    {% if plan_excerpt %}
+      <pre class="code">{{ plan_excerpt }}</pre>
+      <a class="btn" href="/view?path=notes/Project_Proposal/Project_Plan.md">Open Plan</a>
+    {% else %}
+      <div class="empty">Plan not found.</div>
+    {% endif %}
+  </div>
+  <div class="panel">
+    <h2>Project Proposal (latest)</h2>
+    {% if latest_pp %}
+      <div class="row">
+        <div class="row-main">
+          <div class="row-title">{{ latest_pp.name }}</div>
+          <div class="row-meta">{{ latest_pp.mtime }}</div>
+        </div>
+      </div>
+      <a class="btn" href="/file?path={{ latest_pp.url_path }}">Download</a>
+    {% else %}
+      <div class="empty">No PP docx found.</div>
+    {% endif %}
+  </div>
+</section>
+<script>
+(function () {
+  const el = document.getElementById('msk-countdown');
+  if (!el) return;
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function getDiffMs() {
+    const now = new Date();
+    const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+    const mskMs = utcMs + 3 * 60 * 60000;
+    const nowMsk = new Date(mskMs);
+    const reset = new Date(nowMsk);
+    reset.setHours(19, 0, 0, 0);
+    if (reset <= nowMsk) {
+      reset.setDate(reset.getDate() + 1);
+    }
+    return reset - nowMsk;
+  }
+  function tick() {
+    const diff = Math.max(0, Math.floor(getDiffMs() / 1000));
+    const h = Math.floor(diff / 3600);
+    const m = Math.floor((diff % 3600) / 60);
+    const s = diff % 60;
+    el.textContent = pad(h) + ':' + pad(m) + ':' + pad(s);
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
+{% endblock %}

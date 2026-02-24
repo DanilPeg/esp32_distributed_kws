@@ -1,0 +1,21 @@
+﻿date: 2026-02-24
+session_id: agent_ouroboros_008
+goal: Close extra codex windows and ensure evolution loop running
+inputs:
+  - user report: extra PowerShell windows, tasks not running
+  - notes/Journal/agent/queue.json
+  - notes/Journal/agent/events.jsonl
+actions:
+  - Closed extra PowerShell windows spawned for codex (kept main Codex-CLI).
+  - Restarted agent loop watch process.
+results:
+  - Extra codex windows closed; evolution loop running again.
+artifacts:
+  - notes/Journal/agent/queue.json
+  - notes/Journal/agent/events.jsonl
+tests:
+  - Not run
+next:
+  - Monitor next cycle report and auto-close behavior.
+open_questions:
+  - Should codex auto-start be disabled if windows are noisy?

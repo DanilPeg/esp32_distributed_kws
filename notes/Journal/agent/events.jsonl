@@ -1,0 +1,128 @@
+{"ts": "2026-02-24T18:18:16.842361+00:00", "type": "health_check", "status": "warn"}
+{"ts": "2026-02-24T18:18:16.844361+00:00", "type": "review", "task_id": "b7530fc8"}
+{"ts": "2026-02-24T18:18:16.844361+00:00", "type": "evolution_scheduled", "block_id": 0, "task_id": "b7530fc8"}
+{"ts": "2026-02-24T18:18:16.868413+00:00", "type": "cycle_complete", "pending": 1}
+{"ts": "2026-02-24T18:21:03.171451+00:00", "type": "review", "task_id": "b7530fc8"}
+{"ts": "2026-02-24T18:21:03.612361+00:00", "type": "context_pack_written", "task_id": "b7530fc8", "path": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\notes\\Journal\\agent\\tasks\\b7530fc8\\context_pack.md"}
+{"ts": "2026-02-24T18:21:03.659742+00:00", "type": "task_prepared", "task_id": "b7530fc8", "path": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\notes\\Journal\\agent\\tasks\\b7530fc8"}
+{"ts": "2026-02-24T18:21:10.655117+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T18:26:10.704406+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T18:28:57.955037+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T18:30:00.733288+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T18:30:00.735330+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 173}
+{"ts": "2026-02-24T18:31:10.731063+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T18:35:50.512736+00:00", "type": "review", "task_id": "9bd2b53c"}
+{"ts": "2026-02-24T18:35:50.513799+00:00", "type": "evolution_scheduled", "block_id": 1, "task_id": "9bd2b53c"}
+{"ts": "2026-02-24T18:35:50.536297+00:00", "type": "review", "task_id": "9bd2b53c"}
+{"ts": "2026-02-24T18:35:50.814048+00:00", "type": "context_pack_written", "task_id": "9bd2b53c", "path": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\notes\\Journal\\agent\\tasks\\9bd2b53c\\context_pack.md"}
+{"ts": "2026-02-24T18:35:50.815059+00:00", "type": "task_prepared", "task_id": "9bd2b53c", "path": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\notes\\Journal\\agent\\tasks\\9bd2b53c"}
+{"ts": "2026-02-24T18:35:51.867880+00:00", "type": "codex_start", "task_id": "9bd2b53c", "code": 0, "detail": "started"}
+{"ts": "2026-02-24T18:35:51.868879+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T18:35:51.870966+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 567}
+{"ts": "2026-02-24T18:35:55.689505+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T18:35:55.691493+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 377}
+{"ts": "2026-02-24T18:40:52.518944+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T18:40:52.520962+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 377}
+{"ts": "2026-02-24T18:44:26.605174+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T18:44:26.607189+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 377}
+{"ts": "2026-02-24T18:45:54.408115+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T18:45:54.412116+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 377}
+{"ts": "2026-02-24T18:48:42.238240+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T18:48:42.240987+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 377}
+{"ts": "2026-02-24T18:53:45.793028+00:00", "type": "review", "task_id": "afd1dc94"}
+{"ts": "2026-02-24T18:53:45.793549+00:00", "type": "evolution_scheduled", "block_id": 2, "task_id": "afd1dc94"}
+{"ts": "2026-02-24T18:53:45.820968+00:00", "type": "review", "task_id": "afd1dc94"}
+{"ts": "2026-02-24T18:53:46.074309+00:00", "type": "context_pack_written", "task_id": "afd1dc94", "path": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\notes\\Journal\\agent\\tasks\\afd1dc94\\context_pack.md"}
+{"ts": "2026-02-24T18:53:46.123889+00:00", "type": "task_prepared", "task_id": "afd1dc94", "path": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\notes\\Journal\\agent\\tasks\\afd1dc94"}
+{"ts": "2026-02-24T18:53:46.613918+00:00", "type": "codex_start", "task_id": "afd1dc94", "code": 1, "detail": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\code\\scripts\\start_codex_session.ps1:4 §­ Є:27\n+     [string]$PromptFile = \"\",\n+                           ~~\nЌҐ¤®ЇгбвЁ¬®Ґ гб«®ўЁҐ ­ §­ зҐ­Ёп. ‚е®¤­л¬ §­ зҐ­ЁҐ¬ ®ЇҐа в®а  ­ §­ зҐ­Ёп ¤®«¦Ґ­ Ўлвм ®ЎкҐЄв, бЇ®б®Ў­л© ЇаЁ­Ё¬ вм ­ §­ зҐ\n­Ёп, в Є®© Є Є ЇҐаҐ¬Ґ­­ п Ё«Ё бў®©бвў®.\nC:\\Users\\Danil\\diploma_esp32_distributed_nn\\code\\scripts\\start_codex_session.ps1:5 §­ Є:23\n+     [string]$TaskId = \"\",\n+                       ~~\nЌҐ¤®ЇгбвЁ¬®Ґ гб«®ўЁҐ ­ §­ зҐ­Ёп. ‚е®¤­л¬ §­ зҐ­ЁҐ¬ ®ЇҐа в®а  ­ §­ зҐ­Ёп ¤®«¦Ґ­ Ўлвм ®ЎкҐЄв, бЇ®б®Ў­л© ЇаЁ­Ё¬ вм ­ §­ зҐ\n­Ёп, в Є®© Є Є ЇҐаҐ¬Ґ­­ п Ё«Ё бў®©бвў®.\nC:\\Users\\Danil\\diploma_esp32_distributed_nn\\code\\scripts\\start_codex_session.ps1:6 §­ Є:24\n+     [string]$OutFile = \"\",\n+                        ~~\nЌҐ¤®ЇгбвЁ¬®Ґ гб«®ўЁҐ ­ §­ зҐ­Ёп. ‚е®¤­л¬ §­ зҐ­ЁҐ¬ ®ЇҐа в®а  ­ §­ зҐ­Ёп ¤®«¦Ґ­ Ўлвм ®ЎкҐЄв, бЇ®б®Ў­л© ЇаЁ­Ё¬ вм ­ §­ зҐ\n­Ёп, в Є®© Є Є ЇҐаҐ¬Ґ­­ п Ё«Ё бў®©бвў®.\n    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException\n    + FullyQualifiedErrorId : InvalidLeftHandSide"}
+{"ts": "2026-02-24T18:53:46.615078+00:00", "type": "task_done", "task_id": "b7530fc8", "status": "auto_closed", "finished_at": "2026-02-24T18:53:46.615078+00:00", "title": "Daily review: Firmware core"}
+{"ts": "2026-02-24T18:53:46.618041+00:00", "type": "task_auto_closed", "task_id": "b7530fc8"}
+{"ts": "2026-02-24T18:53:46.634420+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T18:53:46.636419+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 659}
+{"ts": "2026-02-24T18:53:52.959720+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T18:53:52.960639+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 381}
+{"ts": "2026-02-24T18:57:12.936173+00:00", "type": "test", "task_id": "5af1b9ac"}
+{"ts": "2026-02-24T18:57:12.965877+00:00", "type": "test", "task_id": "5af1b9ac"}
+{"ts": "2026-02-24T18:57:13.306301+00:00", "type": "context_pack_written", "task_id": "5af1b9ac", "path": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\notes\\Journal\\agent\\tasks\\5af1b9ac\\context_pack.md"}
+{"ts": "2026-02-24T18:57:13.308302+00:00", "type": "task_prepared", "task_id": "5af1b9ac", "path": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\notes\\Journal\\agent\\tasks\\5af1b9ac"}
+{"ts": "2026-02-24T18:57:14.336013+00:00", "type": "codex_start", "task_id": "5af1b9ac", "code": 0, "detail": "started"}
+{"ts": "2026-02-24T18:58:48.333812+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T18:58:48.336947+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 456}
+{"ts": "2026-02-24T19:03:38.808872+00:00", "type": "test", "task_id": "94bb0f58"}
+{"ts": "2026-02-24T19:03:38.835371+00:00", "type": "test", "task_id": "94bb0f58"}
+{"ts": "2026-02-24T19:03:39.159646+00:00", "type": "context_pack_written", "task_id": "94bb0f58", "path": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\notes\\Journal\\agent\\tasks\\94bb0f58\\context_pack.md"}
+{"ts": "2026-02-24T19:03:39.210915+00:00", "type": "task_prepared", "task_id": "94bb0f58", "path": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\notes\\Journal\\agent\\tasks\\94bb0f58"}
+{"ts": "2026-02-24T19:03:39.630282+00:00", "type": "codex_start", "task_id": "94bb0f58", "code": 1, "detail": "At C:\\Users\\Danil\\diploma_esp32_distributed_nn\\code\\scripts\\start_codex_session.ps1:4 char:27\n+     [string]$PromptFile = \"\",\n+                           ~~\nThe assignment expression is not valid. The input to an assignment operator must be an object that is able to accept as\nsignments, such as a variable or a property.\nAt C:\\Users\\Danil\\diploma_esp32_distributed_nn\\code\\scripts\\start_codex_session.ps1:5 char:23\n+     [string]$TaskId = \"\",\n+                       ~~\nThe assignment expression is not valid. The input to an assignment operator must be an object that is able to accept as\nsignments, such as a variable or a property.\nAt C:\\Users\\Danil\\diploma_esp32_distributed_nn\\code\\scripts\\start_codex_session.ps1:6 char:24\n+     [string]$OutFile = \"\",\n+                        ~~\nThe assignment expression is not valid. The input to an assignment operator must be an object that is able to accept as\nsignments, such as a variable or a property.\n    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException\n    + FullyQualifiedErrorId : InvalidLeftHandSide"}
+{"ts": "2026-02-24T19:03:49.151690+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T19:03:49.154977+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 534}
+{"ts": "2026-02-24T19:05:48.635116+00:00", "type": "review", "task_id": "d62e4428"}
+{"ts": "2026-02-24T19:05:48.636700+00:00", "type": "evolution_scheduled", "block_id": 3, "task_id": "d62e4428"}
+{"ts": "2026-02-24T19:05:48.669439+00:00", "type": "review", "task_id": "d62e4428"}
+{"ts": "2026-02-24T19:05:48.970206+00:00", "type": "context_pack_written", "task_id": "d62e4428", "path": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\notes\\Journal\\agent\\tasks\\d62e4428\\context_pack.md"}
+{"ts": "2026-02-24T19:05:48.983585+00:00", "type": "task_prepared", "task_id": "d62e4428", "path": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\notes\\Journal\\agent\\tasks\\d62e4428"}
+{"ts": "2026-02-24T19:05:49.496864+00:00", "type": "codex_start", "task_id": "d62e4428", "code": 1, "detail": "At C:\\Users\\Danil\\diploma_esp32_distributed_nn\\code\\scripts\\start_codex_session.ps1:4 char:27\n+     [string]$PromptFile = \"\",\n+                           ~~\nThe assignment expression is not valid. The input to an assignment operator must be an object that is able to accept as\nsignments, such as a variable or a property.\nAt C:\\Users\\Danil\\diploma_esp32_distributed_nn\\code\\scripts\\start_codex_session.ps1:5 char:23\n+     [string]$TaskId = \"\",\n+                       ~~\nThe assignment expression is not valid. The input to an assignment operator must be an object that is able to accept as\nsignments, such as a variable or a property.\nAt C:\\Users\\Danil\\diploma_esp32_distributed_nn\\code\\scripts\\start_codex_session.ps1:6 char:24\n+     [string]$OutFile = \"\",\n+                        ~~\nThe assignment expression is not valid. The input to an assignment operator must be an object that is able to accept as\nsignments, such as a variable or a property.\n    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException\n    + FullyQualifiedErrorId : InvalidLeftHandSide"}
+{"ts": "2026-02-24T19:05:49.498304+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T19:05:49.499609+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 873}
+{"ts": "2026-02-24T19:08:50.071991+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T19:08:50.074904+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 286}
+{"ts": "2026-02-24T19:13:52.530344+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T19:13:52.534254+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 286}
+{"ts": "2026-02-24T19:18:53.226863+00:00", "type": "health_check", "status": "warn"}
+{"ts": "2026-02-24T19:18:53.227862+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T19:18:53.231379+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 286}
+{"ts": "2026-02-24T19:19:06.822992+00:00", "type": "task_done", "task_id": "d62e4428", "status": "auto_closed", "finished_at": "2026-02-24T19:19:06.822992+00:00", "title": "Daily review: Web portal"}
+{"ts": "2026-02-24T19:19:06.850940+00:00", "type": "task_completed", "task_id": "d62e4428", "status": "auto_closed"}
+{"ts": "2026-02-24T19:23:53.782232+00:00", "type": "review", "task_id": "1cdb5a07"}
+{"ts": "2026-02-24T19:23:53.783231+00:00", "type": "evolution_scheduled", "block_id": 4, "task_id": "1cdb5a07"}
+{"ts": "2026-02-24T19:23:53.806575+00:00", "type": "review", "task_id": "1cdb5a07"}
+{"ts": "2026-02-24T19:23:54.034310+00:00", "type": "context_pack_written", "task_id": "1cdb5a07", "path": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\notes\\Journal\\agent\\tasks\\1cdb5a07\\context_pack.md"}
+{"ts": "2026-02-24T19:23:54.038474+00:00", "type": "task_prepared", "task_id": "1cdb5a07", "path": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\notes\\Journal\\agent\\tasks\\1cdb5a07"}
+{"ts": "2026-02-24T19:23:54.857296+00:00", "type": "codex_start", "task_id": "1cdb5a07", "code": 0, "detail": "started"}
+{"ts": "2026-02-24T19:23:54.858296+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T19:23:54.860297+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 558}
+{"ts": "2026-02-24T19:28:55.385409+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T19:28:55.387417+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 289}
+{"ts": "2026-02-24T19:33:09.619849+00:00", "type": "task_done", "task_id": "1cdb5a07", "status": "auto_closed", "finished_at": "2026-02-24T19:33:09.619849+00:00", "title": "Daily review: Scripts + ops"}
+{"ts": "2026-02-24T19:33:09.640611+00:00", "type": "task_completed", "task_id": "1cdb5a07", "status": "auto_closed"}
+{"ts": "2026-02-24T19:33:55.912110+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T19:33:55.914130+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 289}
+{"ts": "2026-02-24T19:38:56.472822+00:00", "type": "review", "task_id": "0cd4525c"}
+{"ts": "2026-02-24T19:38:56.472822+00:00", "type": "evolution_scheduled", "block_id": 5, "task_id": "0cd4525c"}
+{"ts": "2026-02-24T19:38:56.499550+00:00", "type": "review", "task_id": "0cd4525c"}
+{"ts": "2026-02-24T19:38:56.722439+00:00", "type": "context_pack_written", "task_id": "0cd4525c", "path": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\notes\\Journal\\agent\\tasks\\0cd4525c\\context_pack.md"}
+{"ts": "2026-02-24T19:38:56.729928+00:00", "type": "task_prepared", "task_id": "0cd4525c", "path": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\notes\\Journal\\agent\\tasks\\0cd4525c"}
+{"ts": "2026-02-24T19:38:57.338952+00:00", "type": "codex_start", "task_id": "0cd4525c", "code": 0, "detail": "started"}
+{"ts": "2026-02-24T19:38:57.340447+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T19:38:57.342958+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 473}
+{"ts": "2026-02-24T19:43:57.960632+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T19:43:57.963952+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 291}
+{"ts": "2026-02-24T19:48:58.703789+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T19:48:58.706992+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 291}
+{"ts": "2026-02-24T19:53:08.610750+00:00", "type": "task_done", "task_id": "0cd4525c", "status": "auto_closed", "finished_at": "2026-02-24T19:53:08.610750+00:00", "title": "Daily review: Docs + journals"}
+{"ts": "2026-02-24T19:53:08.687081+00:00", "type": "task_completed", "task_id": "0cd4525c", "status": "auto_closed"}
+{"ts": "2026-02-24T19:53:59.486185+00:00", "type": "review", "task_id": "1500cd2d"}
+{"ts": "2026-02-24T19:53:59.486698+00:00", "type": "evolution_scheduled", "block_id": 0, "task_id": "1500cd2d"}
+{"ts": "2026-02-24T19:53:59.521974+00:00", "type": "review", "task_id": "1500cd2d"}
+{"ts": "2026-02-24T19:54:00.304240+00:00", "type": "context_pack_written", "task_id": "1500cd2d", "path": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\notes\\Journal\\agent\\tasks\\1500cd2d\\context_pack.md"}
+{"ts": "2026-02-24T19:54:00.309492+00:00", "type": "task_prepared", "task_id": "1500cd2d", "path": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\notes\\Journal\\agent\\tasks\\1500cd2d"}
+{"ts": "2026-02-24T19:54:01.120780+00:00", "type": "codex_start", "task_id": "1500cd2d", "code": 0, "detail": "started"}
+{"ts": "2026-02-24T19:54:01.122480+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T19:54:01.124758+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 563}
+{"ts": "2026-02-24T19:59:02.391744+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T19:59:02.395066+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 289}
+{"ts": "2026-02-24T20:04:03.050564+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T20:04:03.053580+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 289}
+{"ts": "2026-02-24T20:05:19.873055+00:00", "type": "task_done", "task_id": "1500cd2d", "status": "auto_closed", "finished_at": "2026-02-24T20:05:19.873055+00:00", "title": "Daily review: Firmware core"}
+{"ts": "2026-02-24T20:05:19.896874+00:00", "type": "task_completed", "task_id": "1500cd2d", "status": "auto_closed"}
+{"ts": "2026-02-24T20:09:03.733533+00:00", "type": "review", "task_id": "9f0782c2"}
+{"ts": "2026-02-24T20:09:03.736343+00:00", "type": "evolution_scheduled", "block_id": 1, "task_id": "9f0782c2"}
+{"ts": "2026-02-24T20:09:03.768175+00:00", "type": "review", "task_id": "9f0782c2"}
+{"ts": "2026-02-24T20:09:04.194252+00:00", "type": "context_pack_written", "task_id": "9f0782c2", "path": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\notes\\Journal\\agent\\tasks\\9f0782c2\\context_pack.md"}
+{"ts": "2026-02-24T20:09:04.246315+00:00", "type": "task_prepared", "task_id": "9f0782c2", "path": "C:\\Users\\Danil\\diploma_esp32_distributed_nn\\notes\\Journal\\agent\\tasks\\9f0782c2"}
+{"ts": "2026-02-24T20:09:05.185786+00:00", "type": "codex_start", "task_id": "9f0782c2", "code": 0, "detail": "started"}
+{"ts": "2026-02-24T20:09:05.187598+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T20:09:05.191234+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 579}
+{"ts": "2026-02-24T20:11:25.525761+00:00", "type": "task_done", "task_id": "9f0782c2", "status": "auto_closed", "finished_at": "2026-02-24T20:11:25.525761+00:00", "title": "Daily review: Training + analysis"}
+{"ts": "2026-02-24T20:11:25.553478+00:00", "type": "task_completed", "task_id": "9f0782c2", "status": "auto_closed"}
+{"ts": "2026-02-24T20:14:05.805658+00:00", "type": "cycle_complete", "pending": 0}
+{"ts": "2026-02-24T20:14:05.808656+00:00", "type": "telegram_report_enqueued", "chat_id": "310562385", "chars": 295}

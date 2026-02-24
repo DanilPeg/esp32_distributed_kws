@@ -1,0 +1,34 @@
+﻿date: 2026-02-23
+session_id: 2026-02-23-pp-003
+goal: Apply IEEE template and verify sources; generate IEEE-formatted DOCX.
+inputs:
+  - notes/Project_Proposal/Project_Proposal_Draft.md
+  - IEEE template (ICLIST 2026 Phoca download)
+  - Web sources: arXiv 1804.03209, 1704.04861, 1801.04381; Interspeech 2015; CIFAR-10 TR; TinyML book; MicroNets (MLSys); TFLite Micro GitHub; ESP-NOW docs
+
+decisions:
+  - Use IEEE A4 Word template as Pandoc reference doc.
+  - Update references with verified metadata and access dates.
+  - Generate DOCX; PDF generation deferred due to TeX setup/permissions.
+
+actions:
+  - Downloaded IEEE A4 DOCX template from ICLIST 2026 site via session POST.
+  - Regenerated DOCX with IEEE template.
+  - Updated references section with verified details and URLs.
+  - Attempted PDF generation via pandoc+xelatex; failed due to MiKTeX permission/setup.
+
+results:
+  - IEEE template saved in notes/Project_Proposal/templates/IEEE-template-a4.docx
+  - IEEE-styled DOCX saved as notes/Project_Proposal/Project_Proposal_IEEE.docx
+  - References updated and verified.
+
+artifacts:
+  - notes/Project_Proposal/templates/IEEE-template-a4.docx
+  - notes/Project_Proposal/Project_Proposal_IEEE.docx
+  - notes/Project_Proposal/Project_Proposal_Draft.md
+
+tests: n/a
+next:
+  - If PDF is required: run MiKTeX setup or convert DOCX to PDF using local Word/LibreOffice.
+open_questions:
+  - Confirm if IEEE A4 Word template is acceptable as the submission format.

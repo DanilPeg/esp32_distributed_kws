@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="article-hero">
+  {% if meta and meta.cover_path %}
+    <div class="article-hero-image">
+      <img src="/file?path={{ meta.cover_path }}" alt="{{ meta.title }}">
+    </div>
+  {% endif %}
+  <div class="article-hero-content">
+    <div class="article-kicker">Article</div>
+    <h1>{{ meta.title if meta else 'Article' }}</h1>
+    <div class="article-meta">{{ meta.date if meta else '' }}{% if meta and meta.read_time %} · {{ meta.read_time }}{% endif %}</div>
+    {% if meta and meta.excerpt %}
+      <p class="article-lead">{{ meta.excerpt }}</p>
+    {% endif %}
+  </div>
+</section>
+
+<section class="article-content panel">
+  <div class="doc">
+    {{ content | safe }}
+  </div>
+</section>
+{% endblock %}

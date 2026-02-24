@@ -1,0 +1,22 @@
+date: 2026-02-24
+session_id: telegram_007
+goal: Prepare message to @RichardTman via Telegram
+inputs:
+  - User request to send a sarcastic, witty line to @RichardTman
+  - User selected variant 3 wording
+  - User asked if chat_id can be obtained without recipient help
+decisions:
+  - Use variant 3 once chat_id is available
+  - Explain that chat_id is only available after user interacts with bot or in shared group updates
+actions:
+  - Pending: request chat_id or ask Richard to /start the bot
+results:
+  - No message sent yet (missing chat_id)
+artifacts:
+  - None
+tests:
+  - Not run
+next:
+  - Get chat_id or wait for /start, then enqueue Telegram message
+open_questions:
+  - Is Richard in a shared group where the bot can see updates?

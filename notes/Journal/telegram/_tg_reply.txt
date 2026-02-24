@@ -1,0 +1,10 @@
+﻿Готово. На сайте теперь 3 большие статьи с картинками и ссылками на материалы:
+- /articles (список)
+- на главной — блок Featured Articles
+
+Файлы:
+- статьи: notes/Research/articles/*.md
+- индекс: notes/Research/articles/index.json
+- обложки: images/figures/articles/*.svg
+
+Проверь внешний URL, если нужно — доработаю стиль/объем.

@@ -1,0 +1,13 @@
+﻿date: 2026-02-24
+session_id: cli
+goal: handle Telegram task request (agent self-improvement research)
+inputs:
+  - Telegram /ask message with research request
+
+actions:
+  - sent acknowledgement + plan and asked for constraints
+artifacts:
+  - notes/Journal/telegram/_tg_reply.txt
+  - notes/Journal/telegram/outbox.jsonl
+open_questions:
+  - desired scope (sources count/language/deadline)

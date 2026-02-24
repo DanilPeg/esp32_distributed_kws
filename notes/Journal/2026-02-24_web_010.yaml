@@ -1,0 +1,26 @@
+﻿date: 2026-02-24
+session_id: cli
+goal: fix PDF internal error, add PP draft to summary, ensure code highlighting
+inputs:
+  - user report: PDF internal server error; no syntax highlighting
+
+decisions:
+  - use RFC5987 filename* for non-ASCII in Content-Disposition
+  - map file extensions to highlight.js languages
+
+actions:
+  - added content_disposition_inline() and applied to /file + /research/file
+  - added LANG_MAP and set default language to plaintext
+  - URL-encoded file paths for /view and /file
+  - added hljs class to code blocks
+  - updated daily summary to mention PP draft
+  - restarted uvicorn
+results:
+  - PDFs should open without 500; code blocks should highlight
+artifacts:
+  - code/web_portal/app.py
+  - code/web_portal/templates/view.html
+  - notes/Journal/summaries/2026-02-24.md
+  - notes/Journal/web_portal_uvicorn.err.log
+open_questions:
+  - confirm PDF opens and syntax highlight visible via ngrok

@@ -1,0 +1,25 @@
+date: 2026-02-24
+session_id: agent_codex_1500cd2d
+goal: Review firmware core (I2S/audio, inference loop, logging)
+inputs:
+  - code/firmware/i2s_mic_test/i2s_mic_test.ino
+  - code/firmware/micro_speech_sim/README.md
+  - code/firmware/micro_speech_sim/micro_speech/audio_provider.cpp
+  - code/firmware/micro_speech_sim/micro_speech/micro_speech.ino
+  - code/firmware/micro_speech_sim/micro_speech/feature_provider.cpp
+  - code/firmware/micro_speech_sim/micro_speech/recognize_commands.cpp
+decisions:
+  - No code changes; document findings and propose fixes in report.
+actions:
+  - Reviewed I2S test sketch configuration and audio capture path.
+  - Checked inference loop flow and logging behavior.
+results:
+  - Found busy-wait in audio init, partial-read handling that can reuse stale audio, I2S port mismatch between test/inference, README fake-mic mismatch, and duplicate micro_speech source copies.
+artifacts:
+  - notes/Journal/agent/tasks/1500cd2d/report.md
+tests:
+  - Not run (review only).
+next:
+  - If approved, patch audio init wait + partial read handling, align I2S config and README, then collect ESP32 serial logs.
+open_questions:
+  - Which I2S port should be canonical for the target board (0 or 1)?

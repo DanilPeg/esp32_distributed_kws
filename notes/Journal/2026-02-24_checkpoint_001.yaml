@@ -1,0 +1,18 @@
+checkpoint_id: 2026-02-24_002
+scope: project_status
+state_summary: |
+  BIBLE condensed and normalized to ASCII (v1.9). Team norms moved to notes/Team_rules.md.
+  Baseline micro_speech recognition observed (unknown/yes) in serial logs.
+completed:
+  - Updated BIBLE to v1.9 with cold-start procedure and eval-driven evolution rules.
+  - Created notes/Team_rules.md for motivation rules.
+  - Recorded Sergey oral test report in journal (unverified).
+  - Recorded baseline micro_speech serial logs (unknown/yes).
+in_progress:
+  - Collect verification artifacts for Sergey test (logs/versions).
+  - Decide whether to reflash with audio_provider optimizations and re-baseline.
+backlog:
+  - Add eval checklist template (if requested).
+  - Review BIBLE wording after team feedback.
+risks:
+  - Lack of logs prevents confirming hardware inference results.

@@ -1,0 +1,12 @@
+{
+  "version": "0.1",
+  "evolution_enabled": true,
+  "autonomous_apply": false,
+  "last_evolution_at": "2026-02-24T20:09:03.737356+00:00",
+  "last_health_check_at": "2026-02-24T19:18:53.227862+00:00",
+  "last_block_id": 1,
+  "pending_tasks": 0,
+  "completed_tasks": 5,
+  "notes": "",
+  "last_report_at": "2026-02-24T20:14:06.910486+00:00"
+}

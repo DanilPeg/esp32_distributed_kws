@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel">
+  <div class="row">
+    <div class="row-main">
+      <div class="row-title">{{ name }}</div>
+      <div class="row-meta">Inline preview</div>
+    </div>
+    <a class="btn" href="/research">Back</a>
+  </div>
+  <div class="pdf-frame">
+    <iframe src="/research/file/{{ name }}" title="{{ name }}"></iframe>
+  </div>
+</section>
+{% endblock %}

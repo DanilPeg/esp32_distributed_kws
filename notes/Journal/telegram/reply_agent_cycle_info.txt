@@ -1,0 +1,5 @@
+﻿Реакция была: /agent run поставил задачу в очередь (pending) — "Daily review: Firmware core". Визуально ничего не произошло, потому что auto_process_queue сейчас выключен.
+Проверить можно командой /agent queue или файлом notes/Journal/agent/queue.json.
+Если хочешь увидеть workspace и context-pack, запусти:
+python code/agent/executor.py run --max-tasks 1
+Либо включи auto_process_queue=true (и при желании auto_start_codex=true) в code/agent/agent_config.json.

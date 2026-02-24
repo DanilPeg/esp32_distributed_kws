@@ -1,0 +1,21 @@
+date: 2026-02-24
+session_id: cli
+goal: diagnose empty serial output after micro_speech_sim changes
+inputs:
+  - user report: serial monitor empty at 115200
+
+decisions:
+  - request ROM log check on reset
+  - propose Serial.begin + heartbeat to confirm loop
+  - verify USB CDC vs UART port settings
+
+actions:
+  - provided troubleshooting steps and suggested code snippet
+results:
+  - pending user test logs
+artifacts:
+  - none
+open_questions:
+  - which COM port is used (USB CDC vs UART)
+  - whether ROM boot log appears on reset
+  - whether heartbeat prints

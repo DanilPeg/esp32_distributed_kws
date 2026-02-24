@@ -1,0 +1,23 @@
+You are running a non-interactive Codex task.
+Repo: C:\Users\Danil\diploma_esp32_distributed_nn
+Task id: 1500cd2d
+Title: Daily review: Firmware core
+
+Description:
+Review block: Firmware core
+Paths: code/firmware/
+Focus: Stability, I2S/audio, inference loop, logging.
+Deliverable: short notes in journal + any concrete fixes to propose.
+
+Workspace files:
+- task.md: C:\Users\Danil\diploma_esp32_distributed_nn\notes\Journal\agent\tasks\1500cd2d\task.md
+- context_pack.md: C:\Users\Danil\diploma_esp32_distributed_nn\notes\Journal\agent\tasks\1500cd2d\context_pack.md
+
+Instructions:
+1) Read task.md and context_pack.md (if present).
+2) Focus on the paths described in the task.
+3) Produce a report in report.md with sections: Summary, Findings, Actions, Tests, Next.
+4) If you make code changes, keep them minimal and list them in the report.
+5) Do not edit BIBLE.md unless necessary for the task.
+6) Use UTF-8 markdown.
+Report path: C:\Users\Danil\diploma_esp32_distributed_nn\notes\Journal\agent\tasks\1500cd2d\report.md

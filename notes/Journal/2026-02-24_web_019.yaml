@@ -1,0 +1,16 @@
+﻿date: 2026-02-24
+session_id: cli
+goal: fix empty Articles list
+inputs:
+  - user report: Articles page empty
+
+actions:
+  - fixed BOM handling in notes/Research/articles/index.json loader
+  - restarted uvicorn
+results:
+  - articles list should render
+artifacts:
+  - code/web_portal/app.py
+  - notes/Journal/web_portal_uvicorn.err.log
+open_questions:
+  - confirm articles now visible

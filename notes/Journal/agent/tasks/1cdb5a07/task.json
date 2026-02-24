@@ -1,0 +1,10 @@
+{
+  "type": "review",
+  "title": "Daily review: Scripts + ops",
+  "description": "Review block: Scripts + ops\nPaths: code/scripts/\nFocus: Automation, safety, idempotency, logs.\nDeliverable: short notes in journal + any concrete fixes to propose.",
+  "needs_agent": true,
+  "id": "1cdb5a07",
+  "created_at": "2026-02-24T19:23:53.780234+00:00",
+  "status": "running",
+  "started_at": "2026-02-24T19:23:53.803060+00:00"
+}

@@ -1,0 +1,19 @@
+﻿date: 2026-02-24
+session_id: agent_ouroboros_012
+goal: Add /task command for custom tasks via Telegram
+inputs:
+  - user request: add /task
+actions:
+  - Added /task handler to telegram_command_daemon (parses title/description and enqueues task).
+  - Updated /help output and BIBLE command list.
+results:
+  - Custom tasks can be added via Telegram and will enter the agent queue.
+artifacts:
+  - code/scripts/telegram_command_daemon.py
+  - BIBLE.md
+tests:
+  - python -m py_compile code/scripts/telegram_command_daemon.py
+next:
+  - Await first /task usage and verify queue entry.
+open_questions:
+  - None

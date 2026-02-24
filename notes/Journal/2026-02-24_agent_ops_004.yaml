@@ -1,0 +1,16 @@
+date: 2026-02-24
+session_id: telegram
+goal: add known contact (Ramil) to BIBLE
+inputs:
+  - user request: record Ramil id as known contact
+
+decisions:
+  - add Known Contacts section with Telegram id
+  - bump BIBLE version to v1.11
+
+actions:
+  - updated BIBLE.md
+results:
+  - Ramil recorded as known contact (non-team)
+artifacts:
+  - BIBLE.md

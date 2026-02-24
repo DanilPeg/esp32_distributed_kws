@@ -1,0 +1,16 @@
+﻿date: 2026-02-24
+session_id: cli
+goal: create watchdog scheduled task and restart portal
+inputs:
+  - user request: create scheduler and restart site
+
+actions:
+  - created Windows Scheduled Task: AgiDiplomaPortalWatchdog (on logon)
+  - restarted uvicorn and launched portal_watchdog.py
+results:
+  - watchdog will auto-start on logon and keep portal alive
+artifacts:
+  - code/scripts/run_portal_watchdog.cmd
+  - code/scripts/portal_watchdog.py
+open_questions:
+  - confirm watchdog running as expected

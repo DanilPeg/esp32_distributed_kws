@@ -1,0 +1,26 @@
+﻿date: 2026-02-24
+session_id: cli
+goal: add RU roadmap UI, search, and clean homepage counters
+inputs:
+  - user request: roadmap (RU) in visual form, search, remove counters
+
+decisions:
+  - roadmap data stored in notes/Project_Proposal/roadmap_ru.json
+  - search across repo names + small text content
+
+actions:
+  - added /roadmap and /search routes + templates
+  - created roadmap_ru.json (RU roadmap)
+  - removed counters from home and added Roadmap panel
+  - updated nav and styles
+  - restarted uvicorn
+results:
+  - roadmap and search available in portal
+artifacts:
+  - notes/Project_Proposal/roadmap_ru.json
+  - code/web_portal/templates/roadmap.html
+  - code/web_portal/templates/search.html
+  - code/web_portal/static/styles.css
+  - code/web_portal/app.py
+open_questions:
+  - confirm roadmap UI and search results quality

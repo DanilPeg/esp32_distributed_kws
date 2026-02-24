@@ -1,0 +1,21 @@
+date: 2026-02-24
+session_id: telegram
+goal: review BIBLE critically and fix mojibake/encoding artifacts
+inputs:
+  - user request: critical review of BIBLE and fix broken encoding
+
+decisions:
+  - normalize BIBLE references to real file names
+  - switch ambiguous/broken Cyrillic to English wording
+  - bump BIBLE to v1.7 and update changelog
+
+actions:
+  - updated BIBLE.md (v1.7)
+  - fixed mojibake in references and normalized English text
+results:
+  - BIBLE no longer contains NBSP/mojibake artifacts
+artifacts:
+  - BIBLE.md
+open_questions:
+  - approve further pruning to meet 2-4 page target
+  - decide on adding structured response template to BIBLE

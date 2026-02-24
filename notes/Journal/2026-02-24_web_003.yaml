@@ -1,0 +1,37 @@
+﻿date: 2026-02-24
+session_id: cli
+goal: bring up web portal locally, prep ngrok, add keep-awake mouse script
+inputs:
+  - secret word for web portal password (provided by user)
+  - request to install ngrok and expose portal externally
+  - request for python mouse-nudge script to avoid sleep
+
+decisions:
+  - run uvicorn using --app-dir to avoid python package name conflicts
+  - require ngrok authtoken (ERR_NGROK_4018) before external URL
+
+actions:
+  - fixed code/web_portal/app.py file_excerpt newline bug
+  - updated code/web_portal/README.md (run command + python-multipart)
+  - generated password hash into code/scripts/web_portal.env (gitignored)
+  - installed fastapi/uvicorn/python-multipart deps
+  - started uvicorn on 0.0.0.0:8000 (background)
+  - attempted ngrok start; blocked by missing authtoken
+  - added code/scripts/keep_awake_mouse.py and started it in background
+  - updated BIBLE.md to v1.14 (ngrok authtoken requirement)
+results:
+  - local portal listening on port 8000
+  - ngrok needs user authtoken to create external URL
+artifacts:
+  - code/web_portal/app.py
+  - code/web_portal/README.md
+  - code/scripts/web_portal.env
+  - code/scripts/keep_awake_mouse.py
+  - notes/Journal/web_portal_uvicorn.out.log
+  - notes/Journal/web_portal_uvicorn.err.log
+  - notes/Journal/keep_awake_mouse.out.log
+  - notes/Journal/keep_awake_mouse.err.log
+  - BIBLE.md
+open_questions:
+  - provide ngrok authtoken to enable external access
+  - confirm portal UI is acceptable; decide next features

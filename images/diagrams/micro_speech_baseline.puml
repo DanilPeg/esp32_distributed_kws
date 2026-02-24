@@ -1,0 +1,35 @@
+﻿@startuml
+skinparam componentStyle rectangle
+skinparam monochrome true
+
+package "micro_speech (baseline)" {
+  [micro_speech.ino] as ino
+  [audio_provider.cpp/.h] as audio
+  [feature_provider.cpp/.h] as feat
+  [micro_features_generator.cpp/.h] as mfg
+  [micro_model_settings.cpp/.h] as settings
+  [recognize_commands.cpp/.h] as recog
+  [command_responder.cpp/.h] as respond
+  [model.cpp/.h] as model
+  [yes_micro_features_data.cpp/.h] as yesdata
+  [no_micro_features_data.cpp/.h] as nodata
+  [ringbuf.c/.h] as ring
+}
+
+ino --> audio : get audio
+ino --> feat : build features
+ino --> recog : process results
+ino --> respond : log output
+ino --> model : inference
+ino --> settings
+
+feat --> audio
+feat --> mfg
+feat --> settings
+
+mfg --> settings
+recog --> settings
+
+audio --> ring
+
+@enduml

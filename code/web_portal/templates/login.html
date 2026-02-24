@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel login">
+  <h2>Access</h2>
+  <p>Enter the secret word to continue.</p>
+  {% if error %}<div class="error">{{ error }}</div>{% endif %}
+  <form method="post" action="/login" class="login-form">
+    <input type="password" name="password" placeholder="Secret word" required />
+    <button class="btn" type="submit">Enter</button>
+  </form>
+</section>
+{% endblock %}

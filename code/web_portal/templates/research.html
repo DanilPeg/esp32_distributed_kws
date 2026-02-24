@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel">
+  <h2>Documents</h2>
+  <div class="row">
+    <div class="row-main">
+      <div class="row-meta">Sources: Research, Project Proposal, Agent</div>
+    </div>
+    <a class="btn" href="/research">Refresh</a>
+  </div>
+  <div class="list">
+    {% set current = '' %}
+    {% for e in entries %}
+      {% if e.category != current %}
+        {% set current = e.category %}
+        <div class="section-title">{{ current }}</div>
+      {% endif %}
+      <div class="row">
+        <div class="row-main">
+          <div class="row-title">{{ e.name }}</div>
+        <div class="row-meta">{{ e.ext }} | {{ e.size_kb }} KB | {{ e.mtime }}</div>
+      </div>
+      <a class="btn" href="/view?path={{ e.url_path }}">Open</a>
+    </div>
+    {% endfor %}
+    {% if entries|length == 0 %}
+      <div class="empty">No PDFs found in notes/Research.</div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

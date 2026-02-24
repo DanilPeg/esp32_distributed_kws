@@ -1,0 +1,4 @@
+﻿Сделано. В BIBLE.md v1.11 добавил секцию Known Contacts:
+- Ramil (Telegram id 400456456), известный контакт, не участник диплома.
+
+Лог: notes/Journal/2026-02-24_agent_ops_004.yaml

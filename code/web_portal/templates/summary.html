@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel">
+  <h2>Саммари дня</h2>
+  {% if summaries and summaries|length > 0 %}
+    {% for s in summaries %}
+      <div class="row">
+        <div class="row-main">
+          <div class="row-title">{{ s.name }}</div>
+          <div class="row-meta">{{ s.mtime }}</div>
+        </div>
+      </div>
+      <div class="summary-box">{{ s.content_html | safe }}</div>
+    {% endfor %}
+  {% else %}
+    <div class="empty">Саммари пока нет.</div>
+  {% endif %}
+</section>
+{% endblock %}

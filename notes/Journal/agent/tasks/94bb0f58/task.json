@@ -1,0 +1,10 @@
+{
+  "type": "test",
+  "title": "TEST: codex auto-run v2",
+  "description": "Write a short report.md confirming the test run. Include the phrase: CODEX AUTO OK. Then exit.",
+  "needs_agent": true,
+  "id": "94bb0f58",
+  "created_at": "2026-02-24T19:03:38.807518+00:00",
+  "status": "running",
+  "started_at": "2026-02-24T19:03:38.834363+00:00"
+}

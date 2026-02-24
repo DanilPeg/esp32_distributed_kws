@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel">
+  <h2>Checkpoint</h2>
+  {% if checkpoint %}
+    <div class="row">
+      <div class="row-main">
+        <div class="row-title">{{ checkpoint.name }}</div>
+        <div class="row-meta">{{ checkpoint.mtime }}</div>
+      </div>
+    </div>
+    <pre class="code">{{ checkpoint.excerpt }}</pre>
+  {% else %}
+    <div class="empty">No checkpoint found.</div>
+  {% endif %}
+</section>
+<section class="panel">
+  <h2>Recent Journal Updates</h2>
+  {% for e in entries %}
+    <div class="row">
+      <div class="row-main">
+        <div class="row-title">{{ e.name }}</div>
+        <div class="row-meta">{{ e.mtime }}</div>
+      </div>
+    </div>
+    <pre class="code">{{ e.excerpt }}</pre>
+  {% endfor %}
+</section>
+{% endblock %}

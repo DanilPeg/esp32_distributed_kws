@@ -1,0 +1,29 @@
+﻿date: 2026-02-24
+session_id: cli
+goal: expand materials browsing to full repo (safe), block env files, add plan to home
+inputs:
+  - request: portal should mirror monorepo materials
+
+decisions:
+  - allow browsing from repo root, but block .env and hidden dirs
+  - keep read-only paths limited by resolver
+
+actions:
+  - set ALLOWED_ROOTS to repo root and added .env denylist
+  - added /browse root listing and refresh button
+  - updated home to show global plan + latest PP docx
+  - updated summary links and documents page
+  - restarted uvicorn
+results:
+  - portal mirrors repo (read-only) with protected secrets
+artifacts:
+  - code/web_portal/app.py
+  - code/web_portal/templates/browse.html
+  - code/web_portal/templates/index.html
+  - code/web_portal/templates/research.html
+  - code/web_portal/static/styles.css
+  - notes/Project_Proposal/Project_Plan.md
+  - notes/Journal/summaries/2026-02-24.md
+  - BIBLE.md
+open_questions:
+  - confirm if any extra directories should be exposed

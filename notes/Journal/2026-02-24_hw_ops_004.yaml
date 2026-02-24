@@ -1,0 +1,28 @@
+date: 2026-02-24
+session_id: cli
+goal: record micro_speech recognition logs (unknown/yes)
+inputs:
+  - user serial logs (pre-heartbeat build)
+
+observations:
+  - Heard unknown (204) @84720ms
+  - Heard unknown (206) @87140ms
+  - Heard unknown (202) @91460ms
+  - Heard unknown (204) @93180ms
+  - Heard unknown (224) @94740ms
+  - Heard unknown (209) @96800ms
+  - Heard unknown (202) @100420ms
+  - Heard unknown (210) @105260ms
+  - Heard unknown (203) @108880ms
+  - Heard yes (222) @119060ms
+  - Heard yes (205) @128380ms
+
+actions:
+  - reverted temporary heartbeat instrumentation in micro_speech.ino
+results:
+  - baseline recognition confirmed in serial output
+artifacts:
+  - notes/Journal/2026-02-24_hw_ops_004.yaml
+  - code/firmware/micro_speech_sim/micro_speech/micro_speech.ino
+open_questions:
+  - confirm whether to keep audio_provider ring buffer optimizations before next flash

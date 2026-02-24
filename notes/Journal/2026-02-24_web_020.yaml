@@ -1,0 +1,21 @@
+﻿date: 2026-02-24
+session_id: cli
+goal: expand articles content and add more visuals
+inputs:
+  - user feedback: articles too short
+
+actions:
+  - expanded three articles with longer sections and deeper explanations
+  - added new SVG diagrams: distributed pipeline, agent loop, I2S ring buffer
+  - embedded new diagrams inside articles
+results:
+  - articles now long-form and include multiple images + links
+artifacts:
+  - notes/Research/articles/distributed-esp32-research.md
+  - notes/Research/articles/self-improving-agents.md
+  - notes/Research/articles/esp32-microcontrollers-deep-dive.md
+  - images/figures/articles/diagram_pipeline.svg
+  - images/figures/articles/diagram_agent_loop.svg
+  - images/figures/articles/diagram_i2s_ring.svg
+open_questions:
+  - confirm article depth and desired additions

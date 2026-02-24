@@ -1,0 +1,33 @@
+[0;32mI (65604) scan: SYSTEM_EVENT_SCAN_DONE[0m
+[0;32mI (94674) scan: SYSTEM_EVENT_SCAN_DONE[0m
+--------scan count of AP is 27-------
+======================================================================
+             SSID             |    RSSI    |           AUTH           
+======================================================================
+         Beeline_2G_F54471    |     -30    |    WIFI_AUTH_WPA_WPA2_PSK
+             MTS_GPON_6FD5    |     -56    |        WIFI_AUTH_WPA2_PSK
+             Beeline_2G_28    |     -59    |    WIFI_AUTH_WPA_WPA2_PSK
+                 Beeline71    |     -65    |    WIFI_AUTH_WPA_WPA2_PSK
+                              |     -65    |    WIFI_AUTH_WPA_WPA2_PSK
+            MGTS_GPON_5996    |     -69    |        WIFI_AUTH_WPA2_PSK
+           MTS_GPON_b3a780    |     -73    |        WIFI_AUTH_WPA2_PSK
+                   MGTS 96    |     -81    |        WIFI_AUTH_WPA2_PSK
+           MTS_GPON_7ba7d0    |     -81    |        WIFI_AUTH_WPA2_PSK
+           MTS_GPON_1ea9e0    |     -85    |        WIFI_AUTH_WPA2_PSK
+            MGTS_GPON_464F    |     -85    |        WIFI_AUTH_WPA2_PSK
+             MGTS_Ext_7288    |     -85    |        WIFI_AUTH_WPA2_PSK
+                  Guest746    |     -87    |                   Unknown
+           MTS_GPON_fc35f0    |     -87    |        WIFI_AUTH_WPA2_PSK
+            MGTS_GPON_9209    |     -87    |        WIFI_AUTH_WPA2_PSK
+                   Guest-H    |     -88    |                   Unknown
+                   Guest-Y    |     -88    |                   Unknown
+             MTS_GPON_8DFF    |     -88    |        WIFI_AUTH_WPA2_PSK
+                   home106    |     -89    |        WIFI_AUTH_WPA2_PSK
+                              |     -89    |            WIFI_AUTH_OPEN
+             MTS_GPON_CFAA    |     -90    |        WIFI_AUTH_WPA2_PSK
+            MGTS_GPON_5193    |     -90    |        WIFI_AUTH_WPA2_PSK
+             MTS_GPON_727D    |     -90    |        WIFI_AUTH_WPA2_PSK
+                  lisenok1    |     -90    |    WIFI_AUTH_WPA_WPA2_PSK
+             MTS_GPON_B683    |     -90    |        WIFI_AUTH_WPA2_PSK
+           MTS_GPON_275390    |     -90    |        WIFI_AUTH_WPA2_PSK
+               2,4WiFi-MIX    |     -93    |    WIFI_AUTH_WPA_WPA2_PSK

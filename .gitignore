@@ -1,0 +1,9 @@
+code/scripts/telegram.env
+code/scripts/telegram_autosend.env
+code/scripts/telegram_commands.env
+code/scripts/web_portal.env
+__pycache__/
+*.pyc
+.codex_header.tmp
+~$*.docx
+notes/Project_Proposal/.miktex/

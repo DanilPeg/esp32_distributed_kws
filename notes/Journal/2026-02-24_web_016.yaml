@@ -1,0 +1,24 @@
+﻿date: 2026-02-24
+session_id: cli
+goal: add auto-restart for web portal after network drops
+inputs:
+  - user request: auto recover website after network disconnect/reconnect
+
+decisions:
+  - add lightweight watchdog script that ensures uvicorn + ngrok are running
+  - provide Windows cmd wrapper for Task Scheduler
+
+actions:
+  - created code/scripts/portal_watchdog.py
+  - created code/scripts/run_portal_watchdog.cmd
+  - updated code/web_portal/README.md with watchdog usage
+  - updated BIBLE.md to v1.20 with watchdog reference
+results:
+  - watchdog available for auto-restart
+artifacts:
+  - code/scripts/portal_watchdog.py
+  - code/scripts/run_portal_watchdog.cmd
+  - code/web_portal/README.md
+  - BIBLE.md
+open_questions:
+  - do you want me to create a scheduled task automatically?

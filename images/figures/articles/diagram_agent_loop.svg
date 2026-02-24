@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560">
+  <defs>
+    <linearGradient id="bga" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#0b1220"/>
+    </linearGradient>
+    <linearGradient id="acca" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#62f0b7"/>
+      <stop offset="1" stop-color="#7aa2ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="560" fill="url(#bga)"/>
+  <circle cx="600" cy="280" r="190" fill="none" stroke="url(#acca)" stroke-width="10"/>
+  <circle cx="600" cy="280" r="250" fill="none" stroke="#1f2937" stroke-width="4" stroke-dasharray="10 12"/>
+  <g fill="#111827" stroke="#7aa2ff" stroke-width="2">
+    <rect x="470" y="70" width="260" height="60" rx="12"/>
+    <rect x="840" y="210" width="260" height="60" rx="12"/>
+    <rect x="470" y="430" width="260" height="60" rx="12"/>
+    <rect x="100" y="210" width="260" height="60" rx="12"/>
+  </g>
+  <text x="520" y="108" fill="#e5e7eb" font-family="Space Grotesk, Arial" font-size="16">Generate Draft</text>
+  <text x="890" y="248" fill="#e5e7eb" font-family="Space Grotesk, Arial" font-size="16">Critique / Feedback</text>
+  <text x="520" y="468" fill="#e5e7eb" font-family="Space Grotesk, Arial" font-size="16">Refine Output</text>
+  <text x="150" y="248" fill="#e5e7eb" font-family="Space Grotesk, Arial" font-size="16">Store Reflection</text>
+  <text x="420" y="520" fill="#9aa3b2" font-family="Space Grotesk, Arial" font-size="16">Self-Refine + Reflexion loop</text>
+</svg>

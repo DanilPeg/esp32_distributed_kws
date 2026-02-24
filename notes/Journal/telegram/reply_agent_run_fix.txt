@@ -1,0 +1,4 @@
+﻿Я пофиксил запуск runner из Telegram (ошибка ImportError с относительными импортами). Теперь /agent run и /evolve run должны работать.
+Попробуй еще раз:
+/agent run
+Если нужно, потом включим auto_process_queue / auto_start_codex.

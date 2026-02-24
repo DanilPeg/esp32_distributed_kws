@@ -1,0 +1,27 @@
+date: 2026-02-24
+session_id: web_021
+goal: Expand portal articles to be longer and more serious
+inputs:
+  - User feedback: articles too short / not serious
+  - Existing articles and index in notes/Research/articles/
+decisions:
+  - Expand all three long-form articles with additional sections, checklists, and appendices
+  - Keep claims tied to existing artifacts and avoid new unverified facts
+actions:
+  - Expanded distributed-esp32-research.md with architecture, methodology, and appendices
+  - Expanded self-improving-agents.md with deeper method explanations and checklists
+  - Expanded esp32-microcontrollers-deep-dive.md with practical diagnostics and appendices
+  - Updated articles index metadata (read_time + excerpts)
+results:
+  - Articles are substantially longer with clearer structure and more detailed guidance
+artifacts:
+  - notes/Research/articles/distributed-esp32-research.md
+  - notes/Research/articles/self-improving-agents.md
+  - notes/Research/articles/esp32-microcontrollers-deep-dive.md
+  - notes/Research/articles/index.json
+tests:
+  - Not run (content update only)
+next:
+  - Verify on portal rendering and collect user feedback on depth
+open_questions:
+  - Are the article lengths now sufficient, or should we expand further with tables and examples?

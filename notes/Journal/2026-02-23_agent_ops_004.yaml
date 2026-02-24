@@ -1,0 +1,21 @@
+date: 2026-02-23
+session_id: cli
+goal: fix Telegram encoding and update BIBLE startup procedure
+inputs:
+  - user report: Telegram replies show '?' characters
+  - user request: add startup procedure to BIBLE
+
+decisions:
+  - write Telegram outbox text via PowerShell Set-Content -Encoding UTF8
+  - update BIBLE.md to v1.4 with startup procedure and encoding rule
+actions:
+  - updated BIBLE.md (v1.4)
+  - created checkpoint 2026-02-23_checkpoint_001.yaml
+results:
+  - Telegram replies now sent as UTF-8
+  - startup procedure documented in BIBLE
+artifacts:
+  - BIBLE.md
+  - notes/Journal/2026-02-23_checkpoint_001.yaml
+open_questions:
+  - confirm encoding stability after additional Telegram replies

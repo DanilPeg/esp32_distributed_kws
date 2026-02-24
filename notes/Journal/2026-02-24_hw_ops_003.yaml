@@ -1,0 +1,18 @@
+date: 2026-02-24
+session_id: cli
+goal: add serial heartbeat to confirm micro_speech loop is running
+inputs:
+  - user report: serial monitor empty; ROM log appears on reset
+
+decisions:
+  - add Serial.begin + boot print
+  - add 1s heartbeat log in loop
+
+actions:
+  - updated code/firmware/micro_speech_sim/micro_speech/micro_speech.ino
+results:
+  - should see 'boot' and 'alive: t=...' once per second if loop runs
+artifacts:
+  - code/firmware/micro_speech_sim/micro_speech/micro_speech.ino
+open_questions:
+  - verify output after flash

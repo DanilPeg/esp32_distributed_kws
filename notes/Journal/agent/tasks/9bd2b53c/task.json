@@ -1,0 +1,10 @@
+{
+  "type": "review",
+  "title": "Daily review: Training + analysis",
+  "description": "Review block: Training + analysis\nPaths: code/training/, code/analysis/\nFocus: Reproducibility, metrics, artifacts, notebooks.\nDeliverable: short notes in journal + any concrete fixes to propose.",
+  "needs_agent": true,
+  "id": "9bd2b53c",
+  "created_at": "2026-02-24T18:35:50.510075+00:00",
+  "status": "running",
+  "started_at": "2026-02-24T18:35:50.533766+00:00"
+}

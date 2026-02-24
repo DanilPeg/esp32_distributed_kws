@@ -1,0 +1,33 @@
+﻿date: 2026-02-23
+session_id: 2026-02-23-pp-002
+goal: Expand Project Proposal to meet word count and add verified sources.
+inputs:
+  - notes/Project_Proposal/Project_Proposal_Draft.md
+  - notes/Project_Proposal/ТЗ_Пегов_Горелов.docx (4).pdf
+  - Web sources: Speech Commands, MobileNets, MobileNetV2, CIFAR-10, KWS CNN, MicroNets, TinyML book, TFLite Micro repo, ESP-NOW docs
+
+decisions:
+  - Set main-body word count to 1530 to meet 1500–2000 requirement.
+  - Add 10 references with IEEE-style numbering; keep explicit web docs to two items.
+  - Include dataset and model selections as planned, with citations.
+
+actions:
+  - Expanded Introduction, Related Work, and Methods sections.
+  - Added diagnostic evaluation paragraph and baseline plan.
+  - Inserted citations [1]-[10] and updated references.
+  - Updated Word Count line to 1530.
+
+results:
+  - Draft v0.2 expanded to required length.
+  - Sources verified and cited.
+
+artifacts:
+  - notes/Project_Proposal/Project_Proposal_Draft.md
+
+tests: n/a
+next:
+  - Decide final dataset choices and protocol (ESP-NOW vs UDP).
+  - Generate DOCX/PDF using IEEE template once formatting is confirmed.
+open_questions:
+  - Which IEEE Word template should be used for final formatting?
+  - Is a PDF required in addition to DOCX for submission?

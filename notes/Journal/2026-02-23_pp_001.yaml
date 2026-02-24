@@ -1,0 +1,31 @@
+﻿date: 2026-02-23
+session_id: 2026-02-23-pp-001
+goal: Start Project Proposal draft per BIBLE and technical assignment.
+inputs:
+  - BIBLE.md
+  - notes/Project_Proposal/ТЗ_Пегов_Горелов.docx (4).pdf
+  - notes/Project_Proposal/ИВТ_Подготовка_и_защита_Project_Proposal_2025_2026_МИЭМ.pdf
+  - notes/Project_Proposal/Евгений_project proposal .docx.pdf
+decisions:
+  - Draft in English using the required PP structure.
+  - Use only verified requirements from the technical assignment.
+  - Leave Related Work and most references as placeholders pending literature search.
+actions:
+  - Extracted text from PP-related PDFs into notes/Project_Proposal/_extracted.
+  - Created initial proposal draft.
+  - Computed word count for the draft.
+results:
+  - Draft v0.1 with all required sections and initial content.
+  - Current word count is below the 1500-2000 requirement.
+artifacts:
+  - notes/Project_Proposal/Project_Proposal_Draft.md
+  - notes/Project_Proposal/_extracted/*.txt
+tests: n/a
+next:
+  - Run a literature search and populate Related Work and References.
+  - Expand content to reach 1500-2000 words and add IEEE-style citations.
+  - Confirm datasets and protocol choice.
+open_questions:
+  - Final dataset selection for audio and images.
+  - Protocol decision (ESP-NOW vs UDP) and justification.
+  - Any supervisor-specific formatting preferences beyond IEEE.

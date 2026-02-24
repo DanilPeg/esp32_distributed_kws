@@ -1,0 +1,25 @@
+﻿date: 2026-02-24
+session_id: agent_codex_1cdb5a07
+goal: Review code/scripts automation safety idempotency logs
+inputs:
+  - code/scripts/*.py
+  - code/scripts/*.ps1
+  - code/scripts/*.cmd
+decisions:
+  - Fix non-ASCII error message in telegram_bridge.py to keep errors readable.
+actions:
+  - Reviewed code/scripts for automation, safety, idempotency, and logging.
+  - Patched telegram_bridge.py error message to English.
+results:
+  - Found hardcoded repo/python paths and non-idempotent startup patterns in Telegram scripts.
+  - Logged concrete follow-up fixes in the task report.
+artifacts:
+  - notes/Journal/agent/tasks/1cdb5a07/report.md
+  - code/scripts/telegram_bridge.py
+tests:
+  - Not run (review + small edit only).
+next:
+  - Replace hardcoded paths with script-relative repo discovery and python lookup.
+  - Add idempotent start/stop checks for Telegram autoflow and watchdog processes.
+open_questions:
+  - None.

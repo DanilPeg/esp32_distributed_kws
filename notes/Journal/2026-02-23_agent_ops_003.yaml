@@ -1,0 +1,16 @@
+date: 2026-02-23
+session_id: cli
+goal: add recovery/handoff protocol for context overflow
+inputs:
+  - user request: design onboarding for new agent on context overflow
+decisions:
+  - add Recovery/Handoff protocol to BIBLE
+  - bump BIBLE to v1.2
+actions:
+  - updated BIBLE.md (v1.2)
+results:
+  - explicit onboarding steps documented
+artifacts:
+  - BIBLE.md
+open_questions:
+  - confirm context pack limits and keywords

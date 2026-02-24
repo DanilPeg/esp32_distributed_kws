@@ -1,0 +1,42 @@
+﻿# Journal entry: 2026-02-23
+session_id: tg-bridge
+
+goal:
+- improve communication without breaking existing TG relay
+
+inputs:
+- user requested: remote triggers from TG, group chat support, command scenarios
+- existing relay: telegram_simple_relay.ps1
+
+decisions:
+- keep single puller (relay) to avoid Telegram API offset conflicts
+- implement command processing from inbox.jsonl (no direct API polling)
+- add minimal remote command set: /status /whoami /start_codex /help
+
+actions:
+- added telegram_command_daemon.py (process commands from inbox, write outbox)
+- added start_codex_session.ps1 (launch PowerShell, cd repo, run codex, set title)
+- added telegram_commands.env (+ .example) and updated .gitignore
+- wired relay to optionally process commands (ENABLE_COMMANDS=1)
+- added BIBLE.md section about command layer and group chat guidance
+
+results:
+- /status works and replies via outbox
+- relay continues to insert trigger messages to CLI
+
+artifacts:
+- code/scripts/telegram_command_daemon.py
+- code/scripts/start_codex_session.ps1
+- code/scripts/telegram_commands.env
+- code/scripts/telegram_commands.env.example
+- code/scripts/telegram_simple_relay.ps1 (updated)
+- code/scripts/telegram_simple_relay.env (updated)
+- BIBLE.md (v0.3)
+
+tests:
+- /status command from TG -> response ok (outbox)
+
+next:
+- verify /whoami and /start_codex
+- configure group chat IDs
+- optionally add /restart_relay and watchdog

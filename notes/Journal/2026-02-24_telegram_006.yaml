@@ -1,0 +1,13 @@
+﻿date: 2026-02-24
+session_id: cli
+goal: reply to Telegram request about articles
+inputs:
+  - Telegram /ask request for articles on site
+
+actions:
+  - sent confirmation reply with paths
+artifacts:
+  - notes/Journal/telegram/_tg_reply.txt
+  - notes/Journal/telegram/outbox.jsonl
+open_questions:
+  - none
