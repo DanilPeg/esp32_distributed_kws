@@ -1,0 +1,15 @@
+{
+  "feature_shape": [
+    49,
+    40,
+    1
+  ],
+  "enable_exact_microfrontend": true,
+  "microfrontend_module_available": true,
+  "using_exact_microfrontend": true,
+  "fallback_enabled": true,
+  "fallback_feature_clip": 8.0,
+  "frame_length_ms": 30,
+  "frame_step_ms": 20,
+  "num_channels": 40
+}

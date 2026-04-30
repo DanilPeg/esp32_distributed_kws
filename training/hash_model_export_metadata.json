@@ -1,0 +1,419 @@
+{
+  "source_bundle": "/content/code/training/hash_artifacts/hash_kws12_iterlab_v1_hash_deeper_fair_ce_exact_microfrontend/hash_kws_student_student.pt",
+  "experiment": {
+    "tag": "hash_kws12_iterlab_v1_hash_deeper_fair_ce_exact_microfrontend",
+    "vocabulary_preset": "kws12",
+    "teacher_reuse_tag": "",
+    "feature": {
+      "sample_rate": 16000,
+      "clip_samples": 16000,
+      "window_ms": 30,
+      "hop_ms": 20,
+      "n_mels": 40,
+      "center": false,
+      "frontend_name": "exact_microfrontend",
+      "normalize_mode": "none",
+      "log_offset": 1e-06,
+      "require_exact_microfrontend": true,
+      "lower_band_limit": 125.0,
+      "upper_band_limit": 7500.0,
+      "smoothing_bits": 10,
+      "even_smoothing": 0.025,
+      "odd_smoothing": 0.06,
+      "min_signal_remaining": 0.05,
+      "enable_pcan": true,
+      "pcan_strength": 0.95,
+      "pcan_offset": 80.0,
+      "gain_bits": 21,
+      "enable_log": true,
+      "scale_shift": 6,
+      "exact_value_divisor": 665.6,
+      "specaugment_prob": 0.0,
+      "time_mask_max": 0,
+      "freq_mask_max": 0
+    },
+    "dataset": {
+      "data_dir": "data",
+      "batch_size": 256,
+      "num_workers": 2,
+      "persistent_workers": true,
+      "prefetch_factor": 2,
+      "seed": 13,
+      "unknown_fraction": 1.0,
+      "silence_fraction": 0.12,
+      "silence_reference": "known",
+      "train_limit": null,
+      "val_limit": null,
+      "test_limit": null,
+      "time_shift_ms": 0,
+      "gain_min": 1.0,
+      "gain_max": 1.0,
+      "noise_stddev": 0.0,
+      "cache_features": true,
+      "cache_dtype": "int8"
+    },
+    "model": {
+      "teacher_name": "",
+      "student_name": "hash_dscnn_deeper",
+      "channels": 64,
+      "teacher_channels": 96,
+      "num_blocks": 4,
+      "teacher_num_blocks": 5,
+      "codebook_size": 500,
+      "stem_codebook_size": 500,
+      "depthwise_codebook_size": 500,
+      "pointwise_codebook_size": 500,
+      "linear_codebook_size": 500,
+      "signed_hash": false,
+      "hash_only_pointwise": false,
+      "teacher_dropout": 0.1,
+      "student_dropout": 0.0
+    },
+    "train": {
+      "teacher_epochs": 0,
+      "student_pretrain_epochs": 0,
+      "student_epochs": 20,
+      "student_polish_epochs": 0,
+      "teacher_lr": 0.001,
+      "student_lr": 0.001,
+      "polish_lr": 0.00025,
+      "weight_decay": 0.0001,
+      "optimizer_name": "adamw",
+      "teacher_scheduler_name": "none",
+      "student_scheduler_name": "none",
+      "label_smoothing": 0.0,
+      "teacher_label_smoothing": 0.0,
+      "kd_alpha": 0.0,
+      "kd_temperature": 4.0,
+      "grad_clip_norm": 0.0,
+      "teacher_early_stopping_patience": 0,
+      "student_early_stopping_patience": 0,
+      "use_amp": true,
+      "use_ema": false,
+      "ema_decay": 0.999,
+      "eval_with_ema": true,
+      "top_k": 3
+    },
+    "export": {
+      "artifacts_dir": "code/training/hash_artifacts",
+      "model_stem": "hash_kws_student"
+    },
+    "commands": [
+      "yes",
+      "no",
+      "up",
+      "down",
+      "left",
+      "right",
+      "on",
+      "off",
+      "stop",
+      "go"
+    ],
+    "all_labels": [
+      "yes",
+      "no",
+      "up",
+      "down",
+      "left",
+      "right",
+      "on",
+      "off",
+      "stop",
+      "go",
+      "unknown",
+      "silence"
+    ],
+    "num_labels": 12,
+    "feature_shape": [
+      40,
+      49
+    ],
+    "model_input_shape": [
+      1,
+      40,
+      49
+    ],
+    "uses_teacher": false,
+    "uses_distillation": false
+  },
+  "bundle_stage_name": "student",
+  "frontend_warning": "The exported runtime preserves model weights and activation scales, but on-device accuracy still depends on matching the training frontend.",
+  "activation_quant_params": [
+    {
+      "stage": "stem",
+      "input_scale": 1.0078740157480315,
+      "output_scale": 0.04280817978025422
+    },
+    {
+      "stage": "block0_depthwise",
+      "input_scale": 0.04280817978025422,
+      "output_scale": 0.08642926554041584
+    },
+    {
+      "stage": "block0_pointwise",
+      "input_scale": 0.08642926554041584,
+      "output_scale": 0.0644126126146692
+    },
+    {
+      "stage": "block1_depthwise",
+      "input_scale": 0.0644126126146692,
+      "output_scale": 0.14189604511411172
+    },
+    {
+      "stage": "block1_pointwise",
+      "input_scale": 0.14189604511411172,
+      "output_scale": 0.09046471212792584
+    },
+    {
+      "stage": "block2_depthwise",
+      "input_scale": 0.09046471212792584,
+      "output_scale": 0.12119469680185394
+    },
+    {
+      "stage": "block2_pointwise",
+      "input_scale": 0.12119469680185394,
+      "output_scale": 0.06947614264300489
+    },
+    {
+      "stage": "block3_depthwise",
+      "input_scale": 0.06947614264300489,
+      "output_scale": 0.3709515549066498
+    },
+    {
+      "stage": "block3_pointwise",
+      "input_scale": 0.3709515549066498,
+      "output_scale": 0.6260481106014703
+    }
+  ],
+  "model_summary": {
+    "trainable_parameters": 6740,
+    "hash_compact_parameters": 5588,
+    "virtual_dense_parameters": 20032,
+    "maccs_rough": 9632768,
+    "layer_inventory": [
+      {
+        "type": "analytic_hash_conv2d",
+        "in_channels": 1,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "codebook_size": 500,
+        "layer_id": 0,
+        "signed_hash": false,
+        "name": "conv0",
+        "compact_parameters": 564,
+        "virtual_parameters": 576
+      },
+      {
+        "type": "analytic_hash_depthwise_conv2d",
+        "channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "codebook_size": 500,
+        "layer_id": 1,
+        "signed_hash": false,
+        "name": "blocks.0.depthwise",
+        "compact_parameters": 564,
+        "virtual_parameters": 576
+      },
+      {
+        "type": "analytic_hash_conv2d",
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "codebook_size": 500,
+        "layer_id": 2,
+        "signed_hash": false,
+        "name": "blocks.0.pointwise",
+        "compact_parameters": 564,
+        "virtual_parameters": 4096
+      },
+      {
+        "type": "analytic_hash_depthwise_conv2d",
+        "channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "codebook_size": 500,
+        "layer_id": 3,
+        "signed_hash": false,
+        "name": "blocks.1.depthwise",
+        "compact_parameters": 564,
+        "virtual_parameters": 576
+      },
+      {
+        "type": "analytic_hash_conv2d",
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "codebook_size": 500,
+        "layer_id": 4,
+        "signed_hash": false,
+        "name": "blocks.1.pointwise",
+        "compact_parameters": 564,
+        "virtual_parameters": 4096
+      },
+      {
+        "type": "analytic_hash_depthwise_conv2d",
+        "channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "codebook_size": 500,
+        "layer_id": 5,
+        "signed_hash": false,
+        "name": "blocks.2.depthwise",
+        "compact_parameters": 564,
+        "virtual_parameters": 576
+      },
+      {
+        "type": "analytic_hash_conv2d",
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "codebook_size": 500,
+        "layer_id": 6,
+        "signed_hash": false,
+        "name": "blocks.2.pointwise",
+        "compact_parameters": 564,
+        "virtual_parameters": 4096
+      },
+      {
+        "type": "analytic_hash_depthwise_conv2d",
+        "channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "codebook_size": 500,
+        "layer_id": 7,
+        "signed_hash": false,
+        "name": "blocks.3.depthwise",
+        "compact_parameters": 564,
+        "virtual_parameters": 576
+      },
+      {
+        "type": "analytic_hash_conv2d",
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "codebook_size": 500,
+        "layer_id": 8,
+        "signed_hash": false,
+        "name": "blocks.3.pointwise",
+        "compact_parameters": 564,
+        "virtual_parameters": 4096
+      },
+      {
+        "type": "analytic_hash_linear",
+        "in_dim": 64,
+        "out_dim": 12,
+        "codebook_size": 500,
+        "layer_id": 9,
+        "signed_hash": false,
+        "name": "fc",
+        "compact_parameters": 512,
+        "virtual_parameters": 768
+      }
+    ]
+  },
+  "firmware_flash_summary": {
+    "hash_codebook_bytes_int8": 5000,
+    "post_affine_and_classifier_bias_bytes_float32": 4656,
+    "activation_quant_bytes_float32": 72,
+    "approx_runtime_model_bytes": 9728,
+    "virtual_dense_int8_weight_bytes": 20032
+  },
+  "runtime_output_dir": "/content/diploma_esp32_distributed_nn/code/firmware/hash_kws_runtime"
+}
