@@ -2,9 +2,23 @@
 
 Полный сценарий запуска: 3 микрофонных узла с разными моделями (`ens_a`,
 `ens_b`, `ens_c`) + 1 master‑агрегатор. Все 4 платы общаются по ESP‑NOW.
-Хост подключается только к master по USB и читает Serial — никакого WiFi.
+Хост подключается к каждой плате по USB и читает Serial; платы могут быть
+**на разных ПК** в одной локальной сети — bridges шлют события в общий
+dashboard через HTTP (`/api/ingest`).
 
 > Все пути относительно корня репозитория.
+
+---
+
+## Топология
+
+Возможны два варианта:
+
+- **Однопэкейный.** Все 4 платы в один ПК (USB‑hub если портов мало). Bridges пишут локальные JSONL, dashboard читает их же. Самый простой.
+- **Двухпэкейный.** ПК‑A — «сервер» (на нём dashboard + опционально часть bridges). ПК‑B — другие bridges. Bridges на любом ПК шлют события на dashboard ПК‑A через HTTP. ПК должны быть в одной локальной сети (одна WiFi или Ethernet — не важно).
+
+Bridges и dashboard взаимодействуют через простой POST endpoint
+`POST http://<dashboard-host>:8765/api/ingest` (см. `code/dashboard/app.py`).
 
 ---
 
@@ -83,7 +97,7 @@ python code\firmware\hash_kws_aggregator\test_aggregator_match.py
 ### 1.2 Активировать вариант `ens_a`
 
 ```powershell
-pwsh -File code\scripts\select_hash_kws_variant.ps1 -Variant ens_a
+powershell -ExecutionPolicy Bypass -File code\scripts\select_hash_kws_variant.ps1 -Variant ens_a
 ```
 
 Что делает: копирует `hash_model_data.cpp` + `hash_model_export_metadata.json` из `code/firmware/hash_kws_runtime_ens_a/` в `code/firmware/hash_kws_runtime/`. Sketch всегда компилирует именно из `hash_kws_runtime/`.
@@ -145,7 +159,7 @@ hash_evt kind=espnow phase=init status=ok
 ### Узел 2
 
 ```powershell
-pwsh -File code\scripts\select_hash_kws_variant.ps1 -Variant ens_b
+powershell -ExecutionPolicy Bypass -File code\scripts\select_hash_kws_variant.ps1 -Variant ens_b
 ```
 
 ```cpp
@@ -157,7 +171,7 @@ pwsh -File code\scripts\select_hash_kws_variant.ps1 -Variant ens_b
 ### Узел 3
 
 ```powershell
-pwsh -File code\scripts\select_hash_kws_variant.ps1 -Variant ens_c
+powershell -ExecutionPolicy Bypass -File code\scripts\select_hash_kws_variant.ps1 -Variant ens_c
 ```
 
 ```cpp
@@ -319,6 +333,133 @@ CRC / magic / version не сходятся. Чаще всего значит, �
 3. График из `code/deploy/hash_ensemble/reports/aggregator_comparison.png` — `mean_logits ensemble = 0.9423` против `best single ens_b = 0.9323` (+1.06 п.п.) и oracle 0.9661.
 4. Тепловая карта `pairwise_disagreement.png` — модели реально разные (~6% несогласий между парами), не схлопнулись в одну.
 5. JSON `ensemble_results.json` — per‑class disagreement: труднее всего `no/go/down`, легче всего `silence`.
+
+---
+
+## Запуск дашборда — однопэкейный вариант
+
+Все 4 платы на одном ПК. Допустим, COM‑порты: `COM3`, `COM5`, `COM6`, `COM7`.
+
+Открой 5 окон PowerShell в корне репозитория.
+
+### Окно 1 — bridge для inference‑узла 1
+
+```powershell
+python code\scripts\hash_kws_serial_bridge.py --port COM3 --node-id 1 --node-label ens_a_node1 --events-path notes\Journal\hash_kws_telemetry\node1\events.jsonl --state-path notes\Journal\hash_kws_telemetry\node1\state.json --raw-path notes\Journal\hash_kws_telemetry\node1\raw.log --echo
+```
+
+### Окно 2 — bridge для inference‑узла 2
+
+```powershell
+python code\scripts\hash_kws_serial_bridge.py --port COM5 --node-id 2 --node-label ens_b_node2 --events-path notes\Journal\hash_kws_telemetry\node2\events.jsonl --state-path notes\Journal\hash_kws_telemetry\node2\state.json --raw-path notes\Journal\hash_kws_telemetry\node2\raw.log --echo
+```
+
+### Окно 3 — bridge для inference‑узла 3
+
+```powershell
+python code\scripts\hash_kws_serial_bridge.py --port COM6 --node-id 3 --node-label ens_c_node3 --events-path notes\Journal\hash_kws_telemetry\node3\events.jsonl --state-path notes\Journal\hash_kws_telemetry\node3\state.json --raw-path notes\Journal\hash_kws_telemetry\node3\raw.log --echo
+```
+
+### Окно 4 — bridge для master
+
+```powershell
+python code\scripts\hash_ensemble_master_bridge.py --port COM7 --echo
+```
+
+### Окно 5 — сам dashboard
+
+```powershell
+python run_dashboard.py
+```
+
+Открой в браузере `http://127.0.0.1:8765/`.
+
+---
+
+## Запуск дашборда — двухпэкейный вариант
+
+Допустим, ПК‑A держит dashboard + master + один inference‑узел; ПК‑B — два других inference‑узла.
+
+### Шаг 1 (на ПК‑A): узнать локальный IP
+
+```powershell
+ipconfig | Select-String "IPv4"
+```
+
+Запиши IP, например `192.168.1.50`.
+
+### Шаг 2 (на ПК‑A): открыть TCP 8765 во входящем firewall'е
+
+Один раз, в админ PowerShell:
+
+```powershell
+New-NetFirewallRule -DisplayName "hash-kws-dashboard" -Direction Inbound -LocalPort 8765 -Protocol TCP -Action Allow
+```
+
+Удалить потом (когда демо закончится):
+
+```powershell
+Remove-NetFirewallRule -DisplayName "hash-kws-dashboard"
+```
+
+### Шаг 3 (на ПК‑A): запустить dashboard на 0.0.0.0
+
+```powershell
+python run_dashboard.py --host 0.0.0.0
+```
+
+`0.0.0.0` означает «слушать на всех сетевых интерфейсах», иначе ПК‑B не достучится.
+
+### Шаг 4 (на ПК‑A): bridges для своих плат — обычным способом
+
+Например, master подключен к ПК‑A на `COM7`, а inference‑узел 1 — на `COM3`:
+
+```powershell
+# master — пишет fusion в decisions.jsonl локально
+python code\scripts\hash_ensemble_master_bridge.py --port COM7 --echo
+
+# inference 1
+python code\scripts\hash_kws_serial_bridge.py --port COM3 --node-id 1 --node-label ens_a_node1 --events-path notes\Journal\hash_kws_telemetry\node1\events.jsonl --state-path notes\Journal\hash_kws_telemetry\node1\state.json --raw-path notes\Journal\hash_kws_telemetry\node1\raw.log --echo
+```
+
+### Шаг 5 (на ПК‑B): bridges с `--remote-url`
+
+Допустим, на ПК‑B inference‑узел 2 — `COM5`, узел 3 — `COM6`. На ПК‑B репозиторий клонировать **не обязательно** — нужен только `code/scripts/hash_kws_serial_bridge.py` с зависимостями `pyserial` и Python 3.10+. Можно скопировать один файл и запустить:
+
+```powershell
+# Inference 2 — пишет на dashboard ПК-A
+python hash_kws_serial_bridge.py --port COM5 --node-id 2 --node-label ens_b_node2 --remote-url http://192.168.1.50:8765/api/ingest --remote-stream node2 --echo
+
+# Inference 3
+python hash_kws_serial_bridge.py --port COM6 --node-id 3 --node-label ens_c_node3 --remote-url http://192.168.1.50:8765/api/ingest --remote-stream node3 --echo
+```
+
+`--events-path` / `--state-path` при `--remote-url` игнорируются — ничего локально не пишется (кроме raw.log для дебага). Все парсенные события улетают на dashboard через HTTP.
+
+### Шаг 6: открыть UI
+
+На любом ПК в одной сети открыть `http://192.168.1.50:8765/` — увидишь все 4 узла одновременно, независимо от того, на каком ПК физически висят их платы.
+
+### Что если master висит на ПК‑B
+
+Симметрично. На ПК‑B запустить master_bridge с `--remote-url`:
+
+```powershell
+python hash_ensemble_master_bridge.py --port COM_OF_MASTER --remote-url http://192.168.1.50:8765/api/ingest --echo
+```
+
+(он шлёт fusion‑события на ту же ингест‑точку с `stream=fusion` — это зашито в скрипт; никаких дополнительных флагов не надо.)
+
+### Опциональная защита токеном
+
+Если ПК‑A и ПК‑B в публичной сети (не доверенный WiFi), запусти dashboard с переменной окружения:
+
+```powershell
+$env:HASH_KWS_INGEST_TOKEN = "secret-string-here"
+python run_dashboard.py --host 0.0.0.0
+```
+
+И на каждом bridge добавить `--remote-token secret-string-here`. Без правильного токена dashboard ответит 401. По умолчанию токен пустой, ingest открыт — для домашнего LAN это нормально.
 
 ---
 
