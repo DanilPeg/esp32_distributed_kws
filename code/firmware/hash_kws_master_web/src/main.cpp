@@ -1,26 +1,22 @@
-// hash_kws_master_web.ino — 4th ESP32: KWS ensemble aggregator + embedded web dashboard
+// main.cpp — 4th ESP32: KWS ensemble aggregator + embedded web dashboard
 //
 // Receives HashKwsEspNowPacket from 3 inference nodes (ens_a / ens_b / ens_c)
 // over ESP-NOW, aggregates logits, and serves a live dashboard at:
 //   http://micro_network.local   (mDNS)
 //   http://<IP>/                 (direct IP, printed on Serial after boot)
 //
-// Required files — copy next to this .ino before compiling:
-//   code/firmware/hash_kws_aggregator/hash_ensemble_aggregator.h
-//   code/firmware/hash_kws_aggregator/hash_ensemble_aggregator.cpp
-//   code/deploy/hash_ensemble/reports/aggregator_params.h
+// File layout (relative to platformio.ini):
+//   src/main.cpp                        ← this file
+//   src/hash_ensemble_aggregator.cpp    ← copy from code/firmware/hash_kws_aggregator/
+//   hash_ensemble_aggregator.h          ← copy from code/firmware/hash_kws_aggregator/
+//   aggregator_params.h                 ← copy from code/deploy/hash_ensemble/reports/
+//   web_page.h                          ← already here
 //
-// Required Arduino libraries (Library Manager):
-//   "ESP Async WebServer" by mathieucarbou  (>=3.x — NOT the me-no-dev fork)
-//   "AsyncTCP" by mathieucarbou
-//   "ArduinoJson" by bblanchon (>=7.0)
-//
-// Board: ESP32 Dev Module  (ESP32 WROOM-32)
+// Board: ESP32 Dev Module (ESP32 WROOM-32)
 //   CPU Frequency   : 240 MHz
-//   Flash Size      : 4MB (standard WROOM-32)
+//   Flash Size      : 4MB
 //   Partition Scheme: Default 4MB with spiffs
 //   Upload Speed    : 921600
-//   (No PSRAM, no USB-CDC — uses UART0 via onboard USB-serial chip)
 
 #include <Arduino.h>
 #include <WiFi.h>
@@ -40,8 +36,8 @@
 //  User configuration — edit before flashing
 // ─────────────────────────────────────────────────────────────────────────────
 
-#define WIFI_SSID     "Big_Frog_Fi"
-#define WIFI_PASSWORD "Ceploplastic27"
+#define WIFI_SSID     "YourSSID"
+#define WIFI_PASSWORD "YourPassword"
 
 // AP fallback credentials (used when STA connect fails)
 #define AP_SSID     "KWS-Master"
@@ -72,13 +68,12 @@
 #endif
 
 // Timing constants
-#define WIFI_STA_TIMEOUT_MS  10000u   // give up STA after this, fall back to AP
-#define NODE_STALE_MS        4000u    // tile turns yellow on dashboard
-#define FUSION_RING_SIZE     50u      // newest-first ring for fusion decisions
-#define LAT_RING_SIZE        30u      // per-node invoke_ms ring for latency stats
-#define DEDUP_MS             800u     // suppress identical label within this window
-// ESP32 WROOM-32: built-in blue LED on GPIO2 (active HIGH).
-// No Neopixel — we do a short 200 ms blink on every fusion event.
+#define WIFI_STA_TIMEOUT_MS  10000u
+#define NODE_STALE_MS        4000u
+#define FUSION_RING_SIZE     50u
+#define LAT_RING_SIZE        30u
+#define DEDUP_MS             800u
+// ESP32 WROOM-32: built-in blue LED on GPIO2 (active HIGH)
 #ifndef LED_BUILTIN
 #define LED_BUILTIN 2
 #endif
@@ -94,9 +89,6 @@ static const char* const kLabels[HASH_KWS_AGG_NUM_CLASSES] = {
 static const char* const kVariants[HASH_KWS_AGG_NUM_NODES] = {
   "ens_a", "ens_b", "ens_c"
 };
-static const char* const kAggModes[] = {
-  "mean_logits", "temperature_scaled", "learned_weights"
-};
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  ESP-NOW packet (must stay byte-identical with inference nodes)
@@ -108,15 +100,15 @@ constexpr uint8_t  kEspNowVersion = 1;
 struct __attribute__((packed)) HashKwsEspNowPacket {
   uint32_t magic;
   uint8_t  version;
-  uint8_t  node;           // 1-based inference node id
+  uint8_t  node;
   uint16_t seq;
-  uint32_t t_ms;           // sender millis()
-  uint16_t invoke_ms;      // TFLite invoke duration
-  uint8_t  kind;           // 0=infer, 1=episode, 2=emit
-  uint8_t  label;          // top-1 class index
-  uint8_t  score;          // top-1 confidence (0..255)
-  uint8_t  margin;         // top-1 minus top-2
-  uint8_t  recent_max;     // audio peak in window
+  uint32_t t_ms;
+  uint16_t invoke_ms;
+  uint8_t  kind;
+  uint8_t  label;
+  uint8_t  score;
+  uint8_t  margin;
+  uint8_t  recent_max;
   uint8_t  flags;
   int8_t   logits[HASH_KWS_AGG_NUM_CLASSES];
   uint16_t crc16;
@@ -129,22 +121,22 @@ struct __attribute__((packed)) HashKwsEspNowPacket {
 struct LatStats { uint16_t min, med, p95, max; };
 
 struct NodeState {
-  uint8_t  label      = 255;    // 255 = never received a packet
-  uint8_t  score      = 0;
-  uint8_t  margin     = 0;
-  uint32_t packets    = 0;
-  uint32_t last_ms    = 0;      // millis() of last accepted packet
+  uint8_t  label   = 255;
+  uint8_t  score   = 0;
+  uint8_t  margin  = 0;
+  uint32_t packets = 0;
+  uint32_t last_ms = 0;
   uint16_t lat_ring[LAT_RING_SIZE] = {};
-  uint8_t  lat_head   = 0;
-  uint8_t  lat_count  = 0;
+  uint8_t  lat_head  = 0;
+  uint8_t  lat_count = 0;
 };
 
 struct FusionRecord {
   uint8_t  label;
-  int16_t  score;    // Q8.8 fixed-point from aggregator
-  int16_t  margin;   // Q8.8 fixed-point
+  int16_t  score;
+  int16_t  margin;
   uint8_t  voters;
-  uint32_t time_ms;  // millis() at decision
+  uint32_t time_ms;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -153,18 +145,17 @@ struct FusionRecord {
 
 static NodeState     g_nodes[HASH_KWS_AGG_NUM_NODES];
 static FusionRecord  g_fusion_ring[FUSION_RING_SIZE];
-static uint8_t       g_fusion_head  = 0;   // next write slot (circular)
-static uint8_t       g_fusion_count = 0;   // how many valid entries (≤ FUSION_RING_SIZE)
+static uint8_t       g_fusion_head  = 0;
+static uint8_t       g_fusion_count = 0;
 
 static volatile uint32_t g_pkts_received = 0;
 static volatile uint32_t g_pkts_rejected = 0;
 static uint32_t          g_fusion_total  = 0;
 
-// Per-node dirty flag: set in ESP-NOW callback, cleared in loop() after broadcast
 static volatile bool g_node_dirty[HASH_KWS_AGG_NUM_NODES] = {};
 
-static bool     g_ap_mode     = false;
-static uint32_t g_led_off_at  = 0;   // millis() when built-in LED should turn off
+static bool     g_ap_mode    = false;
+static uint32_t g_led_off_at = 0;
 
 static hash_kws_ensemble::Aggregator g_aggregator;
 static uint32_t g_last_decision_ms    = 0;
@@ -178,16 +169,15 @@ static AsyncWebServer server(80);
 static AsyncWebSocket ws_("/ws");
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  CRC-16/IBM (Modbus variant, poly 0xA001)
+//  CRC-16/IBM (poly 0xA001)
 // ─────────────────────────────────────────────────────────────────────────────
 
 static uint16_t Crc16(const uint8_t* data, size_t len) {
   uint16_t crc = 0xFFFF;
   for (size_t i = 0; i < len; ++i) {
-    crc ^= static_cast<uint16_t>(data[i]);
+    crc ^= (uint16_t)data[i];
     for (int b = 0; b < 8; ++b)
-      crc = (crc & 1u) ? static_cast<uint16_t>((crc >> 1) ^ 0xA001u)
-                       : static_cast<uint16_t>(crc >> 1);
+      crc = (crc & 1u) ? (uint16_t)((crc >> 1) ^ 0xA001u) : (uint16_t)(crc >> 1);
   }
   return crc;
 }
@@ -202,12 +192,12 @@ static bool ValidatePacket(const HashKwsEspNowPacket& p) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  Latency ringbuffer helpers
+//  Latency ringbuffer
 // ─────────────────────────────────────────────────────────────────────────────
 
 static void LatPush(NodeState& n, uint16_t invoke_ms) {
   n.lat_ring[n.lat_head] = invoke_ms;
-  n.lat_head  = (n.lat_head + 1) % LAT_RING_SIZE;
+  n.lat_head = (n.lat_head + 1) % LAT_RING_SIZE;
   if (n.lat_count < LAT_RING_SIZE) n.lat_count++;
 }
 
@@ -219,29 +209,20 @@ static LatStats LatCompute(const NodeState& n) {
   return {
     buf[0],
     buf[n.lat_count / 2],
-    buf[(static_cast<uint32_t>(n.lat_count) * 95u) / 100u],
+    buf[(uint32_t(n.lat_count) * 95u) / 100u],
     buf[n.lat_count - 1]
   };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  JSON helpers
-// ─────────────────────────────────────────────────────────────────────────────
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  ArduinoJson v6 / v7 compatibility shims
-//
-//  v6: DynamicJsonDocument(cap), obj.createNestedObject("k"), arr.createNestedObject()
-//  v7: JsonDocument (no cap),    obj["k"].to<JsonObject>(),   arr.add<JsonObject>()
-//
-//  Using templates so Arduino IDE generates prototypes without library types
-//  in their signatures (avoids "JsonDocument not declared" in auto-prototype).
+//  ArduinoJson v6 / v7 compatibility helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
 template<typename T>
 static JsonObject jMakeObj(T& parent, const char* key) {
 #if ARDUINOJSON_VERSION_MAJOR >= 7
-  return parent[key].to<JsonObject>();
+  // `template` keyword required when calling a dependent template member function
+  return parent[key].template to<JsonObject>();
 #else
   return parent.createNestedObject(key);
 #endif
@@ -250,7 +231,7 @@ static JsonObject jMakeObj(T& parent, const char* key) {
 template<typename T>
 static JsonArray jMakeArr(T& parent, const char* key) {
 #if ARDUINOJSON_VERSION_MAJOR >= 7
-  return parent[key].to<JsonArray>();
+  return parent[key].template to<JsonArray>();
 #else
   return parent.createNestedArray(key);
 #endif
@@ -266,8 +247,6 @@ static JsonObject jArrAddObj(JsonArray arr) {
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  JSON helpers
-//  AddCounters / FillNodeObj accept JsonObject — a type present in both v6+v7,
-//  so Arduino IDE auto-prototypes compile cleanly without any library-type issues.
 // ─────────────────────────────────────────────────────────────────────────────
 
 static void AddCounters(JsonObject root) {
@@ -275,7 +254,7 @@ static void AddCounters(JsonObject root) {
   c["fusion"]   = g_fusion_total;
   c["packets"]  = g_pkts_received;
   c["rejected"] = g_pkts_rejected;
-  c["agg_mode"] = static_cast<int>(HASH_KWS_AGG_MODE);
+  c["agg_mode"] = (int)HASH_KWS_AGG_MODE;
   c["uptime_s"] = millis() / 1000UL;
 }
 
@@ -287,7 +266,7 @@ static void FillNodeObj(JsonObject obj, int idx) {
   if (n.label < HASH_KWS_AGG_NUM_CLASSES)
     obj["label"] = kLabels[n.label];
   else
-    obj["label"] = nullptr;   // JSON null — "never seen"
+    obj["label"] = nullptr;
   obj["score"]   = n.score;
   obj["margin"]  = n.margin;
   obj["packets"] = n.packets;
@@ -310,10 +289,8 @@ static String BuildSnapshot() {
   for (int i = 0; i < HASH_KWS_AGG_NUM_NODES; ++i)
     FillNodeObj(jArrAddObj(nodesArr), i);
   JsonArray fusionsArr = jMakeArr(doc, "fusion");
-  // Newest-first: walk backwards from (head-1) for fusion_count entries
   for (uint8_t i = 0; i < g_fusion_count; ++i) {
-    int fi = (static_cast<int>(g_fusion_head) - 1 - i + FUSION_RING_SIZE)
-             % static_cast<int>(FUSION_RING_SIZE);
+    int fi = ((int)g_fusion_head - 1 - i + FUSION_RING_SIZE) % (int)FUSION_RING_SIZE;
     const FusionRecord& f = g_fusion_ring[fi];
     JsonObject fo = jArrAddObj(fusionsArr);
     fo["label"]   = kLabels[f.label];
@@ -367,26 +344,22 @@ static String BuildFusionMsg(const FusionRecord& f) {
 static void OnWsEvent(AsyncWebSocket* /*server*/, AsyncWebSocketClient* client,
                       AwsEventType type, void* /*arg*/,
                       uint8_t* /*data*/, size_t /*len*/) {
-  if (type == WS_EVT_CONNECT) {
-    // Send full state snapshot to newly connected client
+  if (type == WS_EVT_CONNECT)
     client->text(BuildSnapshot());
-  }
-  // No inbound messages expected; disconnect/error events handled by cleanupClients()
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  Built-in LED blink on fusion event (WROOM-32 has no Neopixel)
+//  Built-in LED blink
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Blink LED for LED_BLINK_MS; silence/unknown suppress blink.
 static void BlinkForLabel(uint8_t label) {
-  if (label >= 10) return;   // silence / unknown — no blink
+  if (label >= 10) return;
   digitalWrite(LED_BUILTIN, HIGH);
   g_led_off_at = millis() + LED_BLINK_MS;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  ESP-NOW receive callback (runs in WiFi task — keep it lean)
+//  ESP-NOW receive callback
 // ─────────────────────────────────────────────────────────────────────────────
 
 static hash_kws_ensemble::SourceKind KindToSource(uint8_t kind) {
@@ -405,41 +378,29 @@ static void OnDataRecv(const esp_now_recv_info_t* /*info*/,
 static void OnDataRecv(const uint8_t* /*mac*/,
                        const uint8_t* data, int len) {
 #endif
-  if (len != static_cast<int>(sizeof(HashKwsEspNowPacket))) {
-    g_pkts_rejected++;
-    return;
-  }
+  if (len != (int)sizeof(HashKwsEspNowPacket)) { g_pkts_rejected++; return; }
   HashKwsEspNowPacket pkt;
   memcpy(&pkt, data, sizeof(pkt));
-  if (!ValidatePacket(pkt)) {
-    g_pkts_rejected++;
-    return;
-  }
+  if (!ValidatePacket(pkt)) { g_pkts_rejected++; return; }
 
-  const int idx = pkt.node - 1;   // 0-based
+  const int idx = pkt.node - 1;
   NodeState& n  = g_nodes[idx];
-  n.label    = pkt.label;
-  n.score    = pkt.score;
-  n.margin   = pkt.margin;
-  n.last_ms  = millis();
+  n.label   = pkt.label;
+  n.score   = pkt.score;
+  n.margin  = pkt.margin;
+  n.last_ms = millis();
   n.packets++;
   LatPush(n, pkt.invoke_ms);
   g_pkts_received++;
 
-  g_aggregator.submit(
-      pkt.node,
-      KindToSource(pkt.kind),
-      pkt.t_ms,
-      millis(),
-      pkt.logits,
-      HASH_KWS_AGG_NUM_CLASSES);
-
-  // Signal loop() to broadcast node update (avoid heavy JSON in callback)
+  g_aggregator.submit(pkt.node, KindToSource(pkt.kind),
+                      pkt.t_ms, millis(),
+                      pkt.logits, HASH_KWS_AGG_NUM_CLASSES);
   g_node_dirty[idx] = true;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  Aggregator poll — called every loop() iteration
+//  Aggregator poll
 // ─────────────────────────────────────────────────────────────────────────────
 
 static void PollAggregator() {
@@ -448,9 +409,8 @@ static void PollAggregator() {
   if (!out.has_decision) return;
 
   const uint32_t now = millis();
-  const bool dedup = (out.label == g_last_decision_label) &&
-                     ((now - g_last_decision_ms) < DEDUP_MS);
-  if (dedup) return;
+  if (out.label == g_last_decision_label &&
+      (now - g_last_decision_ms) < DEDUP_MS) return;
 
   g_last_decision_label = out.label;
   g_last_decision_ms    = now;
@@ -463,29 +423,24 @@ static void PollAggregator() {
   f.voters  = out.num_voters;
   f.time_ms = now;
 
-  // Push into circular ring (newest-first iteration in BuildSnapshot)
   g_fusion_ring[g_fusion_head] = f;
   g_fusion_head = (g_fusion_head + 1) % FUSION_RING_SIZE;
   if (g_fusion_count < FUSION_RING_SIZE) g_fusion_count++;
 
-  // Broadcast fusion event to all WS clients
   ws_.textAll(BuildFusionMsg(f));
-
-  // Built-in LED blink
   BlinkForLabel(out.label);
 
-  // Serial log — preserved for host-side bridge / JSONL recording
   Serial.printf(
       "hash_evt kind=fusion node=master label=%s score=%d margin=%d "
       "voters=%d mode=%d packets=%lu rejected=%lu\n",
       kLabels[out.label], out.score, out.margin, out.num_voters,
-      static_cast<int>(HASH_KWS_AGG_MODE),
-      static_cast<unsigned long>(g_pkts_received),
-      static_cast<unsigned long>(g_pkts_rejected));
+      (int)HASH_KWS_AGG_MODE,
+      (unsigned long)g_pkts_received,
+      (unsigned long)g_pkts_rejected);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  WiFi bring-up: STA → AP fallback
+//  WiFi: STA → AP fallback
 // ─────────────────────────────────────────────────────────────────────────────
 
 static void BringUpWifi() {
@@ -494,10 +449,8 @@ static void BringUpWifi() {
   Serial.printf("hash_evt kind=wifi phase=sta_connect ssid=%s\n", WIFI_SSID);
 
   const uint32_t t0 = millis();
-  while (WiFi.status() != WL_CONNECTED &&
-         (millis() - t0) < WIFI_STA_TIMEOUT_MS) {
-    delay(250);
-    Serial.print('.');
+  while (WiFi.status() != WL_CONNECTED && (millis() - t0) < WIFI_STA_TIMEOUT_MS) {
+    delay(250); Serial.print('.');
   }
   Serial.println();
 
@@ -505,25 +458,19 @@ static void BringUpWifi() {
     Serial.printf("hash_evt kind=wifi phase=sta_ok ip=%s channel=%d\n",
                   WiFi.localIP().toString().c_str(), WiFi.channel());
   } else {
-    // AP fallback — fixed channel so inference nodes can find us
     g_ap_mode = true;
     WiFi.mode(WIFI_AP);
     WiFi.softAP(AP_SSID, AP_PASSWORD, HASH_KWS_ESPNOW_CHANNEL);
     Serial.printf("hash_evt kind=wifi phase=ap_fallback ssid=%s ip=%s channel=%d\n",
-                  AP_SSID,
-                  WiFi.softAPIP().toString().c_str(),
-                  HASH_KWS_ESPNOW_CHANNEL);
+                  AP_SSID, WiFi.softAPIP().toString().c_str(), HASH_KWS_ESPNOW_CHANNEL);
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  ESP-NOW bring-up
+//  ESP-NOW init
 // ─────────────────────────────────────────────────────────────────────────────
 
 static void BringUpEspNow() {
-  // Channel is already correct (set by STA WiFi or by softAP above).
-  // In STA mode it matches the router; inference nodes must be compiled
-  // with the same channel.
   if (esp_now_init() != ESP_OK) {
     Serial.println("hash_evt kind=espnow phase=init status=fail node=master");
     return;
@@ -535,27 +482,21 @@ static void BringUpEspNow() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  setup()
+//  setup() / loop()
 // ─────────────────────────────────────────────────────────────────────────────
 
 void setup() {
   Serial.begin(115200);
   delay(50);
-  Serial.printf(
-      "hash_evt kind=boot node=master role=master_web "
-      "channel=%d agg_mode=%d\n",
-      HASH_KWS_ESPNOW_CHANNEL, HASH_KWS_AGG_MODE);
+  Serial.printf("hash_evt kind=boot node=master role=master_web channel=%d agg_mode=%d\n",
+                HASH_KWS_ESPNOW_CHANNEL, HASH_KWS_AGG_MODE);
 
   pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, HIGH);   // LED on while booting
+  digitalWrite(LED_BUILTIN, HIGH);
 
-  // ── WiFi ──────────────────────────────────────────────────────────────────
   BringUpWifi();
-
-  // ── ESP-NOW ───────────────────────────────────────────────────────────────
   BringUpEspNow();
 
-  // ── mDNS ──────────────────────────────────────────────────────────────────
   if (MDNS.begin(MDNS_HOSTNAME)) {
     MDNS.addService("http", "tcp", 80);
     Serial.printf("hash_evt kind=mdns hostname=%s.local\n", MDNS_HOSTNAME);
@@ -563,12 +504,7 @@ void setup() {
     Serial.println("hash_evt kind=mdns status=fail");
   }
 
-  // ── Aggregator ────────────────────────────────────────────────────────────
-  g_aggregator.reset(
-      HASH_KWS_AGG_NUM_NODES,
-      HASH_KWS_AGG_NUM_CLASSES,
-      HASH_KWS_AGG_WINDOW_MS);
-
+  g_aggregator.reset(HASH_KWS_AGG_NUM_NODES, HASH_KWS_AGG_NUM_CLASSES, HASH_KWS_AGG_WINDOW_MS);
 #if HASH_KWS_AGG_MODE == 1
   g_aggregator.setTemperatures(kHashEnsembleTemperatures);
   g_aggregator.setMode(hash_kws_ensemble::Mode::kModeTemperatureScaled);
@@ -579,45 +515,30 @@ void setup() {
   g_aggregator.setMode(hash_kws_ensemble::Mode::kModeMeanLogits);
 #endif
 
-  // ── WebSocket ─────────────────────────────────────────────────────────────
   ws_.onEvent(OnWsEvent);
   server.addHandler(&ws_);
 
-  // ── HTTP routes ───────────────────────────────────────────────────────────
   server.on("/", HTTP_GET, [](AsyncWebServerRequest* req) {
-    req->send_P(200, "text/html", kDashboardHtml);
+    req->send(200, "text/html", kDashboardHtml);
   });
-
-  server.onNotFound([](AsyncWebServerRequest* req) {
-    req->redirect("/");
-  });
-
+  server.onNotFound([](AsyncWebServerRequest* req) { req->redirect("/"); });
   server.begin();
 
-  const String ip = g_ap_mode ? WiFi.softAPIP().toString()
-                              : WiFi.localIP().toString();
-  Serial.printf(
-      "hash_evt kind=http phase=ready ip=%s url=http://%s/ mdns=http://%s.local/\n",
-      ip.c_str(), ip.c_str(), MDNS_HOSTNAME);
+  const String ip = g_ap_mode ? WiFi.softAPIP().toString() : WiFi.localIP().toString();
+  Serial.printf("hash_evt kind=http phase=ready ip=%s url=http://%s/ mdns=http://%s.local/\n",
+                ip.c_str(), ip.c_str(), MDNS_HOSTNAME);
 
-  digitalWrite(LED_BUILTIN, LOW);   // LED off = ready
+  digitalWrite(LED_BUILTIN, LOW);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  loop()
-// ─────────────────────────────────────────────────────────────────────────────
-
 void loop() {
-  // Turn off built-in LED after blink period
   if (g_led_off_at && millis() >= g_led_off_at) {
     digitalWrite(LED_BUILTIN, LOW);
     g_led_off_at = 0;
   }
 
-  // Flush stale WS connections
   ws_.cleanupClients();
 
-  // Broadcast per-node updates flagged by ESP-NOW callback
   for (int i = 0; i < HASH_KWS_AGG_NUM_NODES; ++i) {
     if (g_node_dirty[i]) {
       g_node_dirty[i] = false;
@@ -625,8 +546,6 @@ void loop() {
     }
   }
 
-  // Check aggregator for new fusion decisions
   PollAggregator();
-
   delay(20);
 }
