@@ -1,0 +1,11 @@
+{
+    "name": "protocol",
+    "version": "1.0.0",
+    "description": "Shared ESP-NOW packet format for Distributed NN Network",
+    "frameworks": "arduino",
+    "platforms": "espressif32",
+    "build": {
+        "flags": "-Iinclude",
+        "includeDir": "include"
+    }
+}
