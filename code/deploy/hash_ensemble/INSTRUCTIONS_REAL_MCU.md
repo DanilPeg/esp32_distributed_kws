@@ -336,7 +336,40 @@ CRC / magic / version не сходятся. Чаще всего значит, �
 
 ---
 
-## Запуск дашборда — однопэкейный вариант
+## Запуск дашборда — лучший вариант: один USB на master, всё через demux‑bridge
+
+С версии «master forwards per-node events» master, получая ESP‑NOW пакет
+от inference‑узла, **дублирует** его содержимое в свой Serial:
+
+```
+hash_evt kind=infer node=2 t=14000 invoke_ms=228 top1=yes top1_score=200 margin=58 recent_max=70 seq=8
+```
+
+То есть весь поток per‑node телеметрии (включая `invoke_ms`, `top1`,
+`recent_max`) приходит на хост по **одному** USB‑кабелю — master'скому.
+inference‑узлы вообще можно не подключать к ПК (только питание).
+
+Запуск — два окна:
+
+```powershell
+# Окно 1 — demux bridge: разводит Serial master'а по nodeN/events.jsonl + decisions.jsonl
+python code\scripts\hash_kws_master_demux_bridge.py --port COM_OF_MASTER --echo
+
+# Окно 2 — dashboard
+python run_dashboard.py
+```
+
+Открой `http://127.0.0.1:8765/`. В дашборде:
+- **node1/2/3** заполняются из telemetry, демуксированной из master Serial.
+- **Recognised commands hero‑strip** — из тех же infer/emit узлов.
+- **Inference performance** — invoke_ms собирается через demux.
+- **Fusion decisions** — из `kind=fusion` master'а.
+
+Это самый удобный сценарий для одного ПК и одного провода.
+
+---
+
+## Запуск дашборда — старый вариант, отдельные кабели на каждый узел
 
 Все 4 платы на одном ПК. Допустим, COM‑порты: `COM3`, `COM5`, `COM6`, `COM7`.
 

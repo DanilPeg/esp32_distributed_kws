@@ -68,6 +68,12 @@
 #ifndef HASH_KWS_AGG_MODE
 #define HASH_KWS_AGG_MODE 0
 #endif
+#ifndef HASH_KWS_MASTER_FORWARD_NODE_EVENTS
+// Forward per-node infer/episode/emit Serial lines from received packets,
+// in the same format inference nodes would print themselves. Lets a host
+// demux per-node telemetry from a single USB cable on the master.
+#define HASH_KWS_MASTER_FORWARD_NODE_EVENTS 1
+#endif
 #ifndef HASH_KWS_WIFI_MODE
 #define HASH_KWS_WIFI_MODE 1   // 1 = STA (default), 0 = AP
 #endif
@@ -135,6 +141,10 @@ struct PerNodeState {
   uint8_t  last_score;
   uint8_t  last_margin;
   uint32_t packets;
+  uint16_t last_invoke_ms;
+  uint8_t  last_kind;       // 0=infer, 1=episode, 2=emit
+  int8_t   last_recent_max;
+  uint16_t last_seq;
 };
 static PerNodeState g_nodes[HASH_KWS_AGG_NUM_NODES];
 
@@ -204,11 +214,15 @@ static void appendCounters(JsonObject obj) {
 }
 
 static void appendNode(JsonObject obj, const PerNodeState& n) {
-  obj["node"]    = n.node_id;
-  obj["label"]   = n.last_label;
-  obj["score"]   = n.last_score;
-  obj["margin"]  = n.last_margin;
-  obj["packets"] = n.packets;
+  obj["node"]       = n.node_id;
+  obj["label"]      = n.last_label;
+  obj["score"]      = n.last_score;
+  obj["margin"]     = n.last_margin;
+  obj["packets"]    = n.packets;
+  obj["invoke_ms"]  = n.last_invoke_ms;
+  obj["kind"]       = n.last_kind;
+  obj["recent_max"] = n.last_recent_max;
+  obj["seq"]        = n.last_seq;
 }
 
 static void appendFusion(JsonObject obj, const FusionEntry& f) {
@@ -239,12 +253,16 @@ static void sendSnapshot(AsyncWebSocketClient* client) {
 
 static void broadcastNode(const PerNodeState& n) {
   JsonDocument doc;
-  doc["type"]    = "node";
-  doc["node"]    = n.node_id;
-  doc["label"]   = n.last_label;
-  doc["score"]   = n.last_score;
-  doc["margin"]  = n.last_margin;
-  doc["packets"] = n.packets;
+  doc["type"]       = "node";
+  doc["node"]       = n.node_id;
+  doc["label"]      = n.last_label;
+  doc["score"]      = n.last_score;
+  doc["margin"]     = n.last_margin;
+  doc["packets"]    = n.packets;
+  doc["invoke_ms"]  = n.last_invoke_ms;
+  doc["kind"]       = n.last_kind;
+  doc["recent_max"] = n.last_recent_max;
+  doc["seq"]        = n.last_seq;
   appendCounters(doc["counters"].to<JsonObject>());
   String out; serializeJson(doc, out);
   ws.textAll(out);
@@ -294,13 +312,38 @@ static void onDataRecv(const uint8_t* /*mac*/, const uint8_t* data, int len) {
   }
   g_packets_received++;
   PerNodeState& slot = g_nodes[p.node - 1];
-  slot.node_id      = p.node;
-  slot.ever_seen    = true;
-  slot.last_seen_ms = millis();
-  slot.last_label   = p.label;
-  slot.last_score   = p.score;
-  slot.last_margin  = p.margin;
+  slot.node_id         = p.node;
+  slot.ever_seen       = true;
+  slot.last_seen_ms    = millis();
+  slot.last_label      = p.label;
+  slot.last_score      = p.score;
+  slot.last_margin     = p.margin;
+  slot.last_invoke_ms  = p.invoke_ms;
+  slot.last_kind       = p.kind;
+  slot.last_recent_max = static_cast<int8_t>(p.recent_max);
+  slot.last_seq        = p.seq;
   slot.packets++;
+
+#if HASH_KWS_MASTER_FORWARD_NODE_EVENTS
+  const char* kind_str = (p.kind == 2) ? "emit"
+                       : (p.kind == 1) ? "episode"
+                       : "infer";
+  const char* label_str = (p.label < HASH_KWS_AGG_NUM_CLASSES)
+                          ? kCategoryLabels[p.label]
+                          : "?";
+  Serial.printf(
+      "hash_evt kind=%s node=%u t=%lu invoke_ms=%u top1=%s top1_score=%d margin=%d recent_max=%d seq=%u\n",
+      kind_str,
+      static_cast<unsigned>(p.node),
+      static_cast<unsigned long>(p.t_ms),
+      static_cast<unsigned>(p.invoke_ms),
+      label_str,
+      static_cast<int>(p.score),
+      static_cast<int>(p.margin),
+      static_cast<int>(static_cast<int8_t>(p.recent_max)),
+      static_cast<unsigned>(p.seq));
+#endif
+
   // Note: WebSocket broadcast from receive context is fine on this stack
   // (esp_now_recv_cb runs in the WiFi task; AsyncTCP queues the writes).
   broadcastNode(slot);

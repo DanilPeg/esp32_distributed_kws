@@ -99,8 +99,16 @@ function setNode(n) {
   const lblEl = el.querySelector(".node-label");
   lblEl.textContent = lbl;
   lblEl.className = "node-label label-" + lbl;
-  el.querySelector(".node-meta").textContent =
-    "score=" + n.score + " margin=" + n.margin + " packets=" + n.packets;
+  const KIND = ["infer","episode","emit"];
+  const meta = [
+    "score=" + n.score,
+    "margin=" + n.margin,
+    "invoke=" + (n.invoke_ms ?? 0) + "ms",
+    "rmax=" + (n.recent_max ?? 0),
+    "kind=" + (KIND[n.kind] || "?"),
+    "pkts=" + n.packets,
+  ].join(" ");
+  el.querySelector(".node-meta").textContent = meta;
   nodeFresh(n.node);
 }
 function pushFusion(f) {

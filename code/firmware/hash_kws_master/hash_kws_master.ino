@@ -48,6 +48,12 @@
 #ifndef HASH_KWS_AGG_MODE
 #define HASH_KWS_AGG_MODE 0  // 0 = mean_logits (recommended per ensemble_results.json)
 #endif
+#ifndef HASH_KWS_MASTER_FORWARD_NODE_EVENTS
+// Print one `hash_evt kind=infer/episode/emit node=N ...` Serial line per
+// received packet, so the host can demux per-node telemetry from a single
+// USB cable on the master.
+#define HASH_KWS_MASTER_FORWARD_NODE_EVENTS 1
+#endif
 #ifndef LED_RGB_PIN
 #define LED_RGB_PIN 48
 #endif
@@ -146,6 +152,29 @@ static void onDataRecv(const uint8_t* /*mac*/, const uint8_t* data, int len) {
       /*logits=*/p.logits,
       /*num_classes=*/HASH_KWS_AGG_NUM_CLASSES);
   if (ok) g_packets_received++;
+
+#if HASH_KWS_MASTER_FORWARD_NODE_EVENTS
+  // Forward per-node infer/episode/emit lines to Serial so the host can
+  // demultiplex per-node telemetry from this single USB cable. Mirrors the
+  // format inference nodes print on their own Serial.
+  const char* kind_str = (p.kind == 2) ? "emit"
+                       : (p.kind == 1) ? "episode"
+                       : "infer";
+  const char* label_str = (p.label < HASH_KWS_AGG_NUM_CLASSES)
+                          ? kCategoryLabels[p.label]
+                          : "?";
+  Serial.printf(
+      "hash_evt kind=%s node=%u t=%lu invoke_ms=%u top1=%s top1_score=%d margin=%d recent_max=%d seq=%u\n",
+      kind_str,
+      static_cast<unsigned>(p.node),
+      static_cast<unsigned long>(p.t_ms),
+      static_cast<unsigned>(p.invoke_ms),
+      label_str,
+      static_cast<int>(p.score),
+      static_cast<int>(p.margin),
+      static_cast<int>(static_cast<int8_t>(p.recent_max)),
+      static_cast<unsigned>(p.seq));
+#endif
 }
 
 static void rgbForLabel(uint8_t label) {
