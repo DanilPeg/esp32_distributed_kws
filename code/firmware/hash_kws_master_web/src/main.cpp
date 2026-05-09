@@ -36,8 +36,8 @@
 //  User configuration — edit before flashing
 // ─────────────────────────────────────────────────────────────────────────────
 
-#define WIFI_SSID     "YourSSID"
-#define WIFI_PASSWORD "YourPassword"
+#define WIFI_SSID     "Big_Frog_Fi"
+#define WIFI_PASSWORD "Ceplosergicollection27"
 
 // AP fallback credentials (used when STA connect fails)
 #define AP_SSID     "KWS-Master"
