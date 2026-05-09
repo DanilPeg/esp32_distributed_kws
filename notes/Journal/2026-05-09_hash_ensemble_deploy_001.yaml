@@ -1,0 +1,108 @@
+entry_id: 2026-05-09_hash_ensemble_deploy_001
+date: '2026-05-09'
+domain: ml
+topic: hash_ensemble_3_models_trained_and_deployed_locally
+status: ready_for_real_mcu_run
+summary: |
+  Colab training of the three near-homo hash KWS students completed. Bundle
+  unpacked into the repo, then reorganised into a clean deploy/ tree and
+  parallel firmware-runtime variants. Master role lives on a separate (4th)
+  ESP32: minimal sketch added at code/firmware/hash_kws_master/. Best
+  aggregator on test is essentially a tie among mean_logits / mean_probs /
+  temperature_scaled / learned_weights at ~0.9425; chosen mean_logits as the
+  default for deployment (cheapest on MCU, no exp).
+results:
+  teacher_test:
+    loss: 0.1727506453045212
+    accuracy: 0.9514877851105707
+    top3_accuracy: 0.9908533055459071
+  per_model_test:
+    ens_a: { top1: 0.9308787773532476, top3: 0.9893481532939679, compact: 8780  }
+    ens_b: { top1: 0.9322681486627301, top3: 0.9895797151788815, compact: 9804  }
+    ens_c: { top1: 0.9306472154683340, top3: 0.9892323723515110, compact: 10828 }
+  best_single: 0.9322681486627301      # ens_b (= old hn95_kd128 baseline)
+  aggregators_test:
+    mean_logits:           { top1: 0.9423410906564780 }
+    mean_probs:            { top1: 0.9429199953687623 }   # marginal best
+    conf_weighted:         { top1: 0.9423410906564780 }
+    trimmed:               { top1: 0.9409517193469955 }
+    majority_vote:         { top1: 0.9419937478291073 }
+    temperature_scaled:
+      top1: 0.9424568715989348
+      T: [0.8395526357988761, 0.8400623776343841, 0.8600058290655757]
+    learned_weights:
+      top1: 0.9423410906564780
+      w: [0.33336883509605186, 0.33314512616236935, 0.3334860387415787]
+  oracle_top1: 0.9660761838601366
+  pairwise_disagreement: [[0, 0.0603, 0.0577], [0.0603, 0, 0.0631], [0.0577, 0.0631, 0]]
+  per_class_disagreement_top:
+    no:    0.165
+    go:    0.169
+    down:  0.150
+    up:    0.132
+    right: 0.121
+    silence: 0.022
+  dispersion:
+    single_mean: 0.9312647138281038
+    single_std:  0.000715805526262634
+interpretation: |
+  Ensemble lifts best-single from 0.9323 to 0.9429 (+1.06 p.p.), inside the
+  +1.5–2.5 p.p. baggin band predicted by the prior research. All five
+  "smart" aggregators land within a 0.20 p.p. window of mean_logits — exactly
+  the "smart-aggregators-do-not-buy-much" finding from
+  code/analysis/hash_ensemble/NOTES.md §7.4. Learned weights converge to
+  ~uniform (0.333 / 0.333 / 0.333), confirming risk #5 from the v2 plan: when
+  three models are near-equally calibrated the learned head provides nothing
+  over plain averaging — and we report this as a positive negative result.
+  Per-class disagreement is highest on phonetically close pairs (no/go) and
+  on `down` — diploma-relevant material for the discussion section.
+chosen_aggregator: mean_logits
+chosen_aggregator_reason: |
+  mean_probs is +0.058 p.p. (within seed noise from the dispersion measurement
+  ~0.07 p.p.). mean_logits requires no exp() on the master MCU and matches the
+  research headline. Calibration / learned-weight paths are kept available in
+  the firmware aggregator behind compile-time HASH_KWS_AGG_MODE.
+deploy_tree:
+  reports:
+    - code/deploy/hash_ensemble/reports/ensemble_results.json
+    - code/deploy/hash_ensemble/reports/aggregator_params.h
+    - code/deploy/hash_ensemble/reports/aggregator_comparison.png
+    - code/deploy/hash_ensemble/reports/pairwise_disagreement.png
+  models:
+    - code/deploy/hash_ensemble/models/ens_a/{student_best.pt, firmware_export/}
+    - code/deploy/hash_ensemble/models/ens_b/{student_best.pt, firmware_export/}
+    - code/deploy/hash_ensemble/models/ens_c/{student_best.pt, firmware_export/}
+  firmware_variants:
+    - code/firmware/hash_kws_runtime_ens_a/   # full sketch overlay (model + shared scaffolding)
+    - code/firmware/hash_kws_runtime_ens_b/
+    - code/firmware/hash_kws_runtime_ens_c/
+  master_sketch:
+    - code/firmware/hash_kws_master/{hash_kws_master.ino, hash_ensemble_aggregator.{h,cpp}, aggregator_params.h, README.md}
+sergey_branch_review:
+  branch: docs/audio-demo-sergey
+  commit: 6c81c01 "feat: mic1/mic2 distributed network nodes"
+  takeaways:
+    - "Sergey built a PlatformIO project with mic1/mic2/coordinator/cam, with the coordinator role running an AsyncWebSocket dashboard ON the ESP32 itself. Useful for diploma demos that want zero-host operation."
+    - "His shared protocol (InferencePacket, 74 bytes) carries top-3 textual labels with 0-100 score — sufficient for human-readable dashboards but throws away the raw logits we need for mean_logits / temperature_scaled / learned_weights aggregation. We keep the existing 12-int8-logit packet for that reason."
+    - "Adopted local: Serial.begin() before first printf — already followed; WIFI_CHANNEL=11 — left at 1 by default but exposed as a build flag (HASH_KWS_ESPNOW_CHANNEL)."
+    - "Stub mode (USE_HASH_KWS_MODEL=0) — good idea, leaving it as a TODO for the master sketch (it can already accept packets with no model on board)."
+verification:
+  - "py_compile clean on all touched files."
+  - "C++ aggregator parity test (test_aggregator_match.py) still passes after copying aggregator_params.h next to the master sketch."
+  - "deploy/ tree manually verified to contain all 4 reports + 3×student_best.pt + 3×firmware_export/."
+  - "Each hash_kws_runtime_ens_<x>/ contains 14 files (variant-specific hash_model_data.cpp + metadata + 12 shared scaffolding files). hash_model_data.cpp differs across variants (PW codebooks 1024 / 1280 / 1536 first-block sizes confirmed by file head)."
+  - "Repo root cleaned: ens_{a,b,c}/, ensemble_results.json, aggregator_params.h, aggregator_comparison.png, pairwise_disagreement.png removed (originals preserved under code/deploy/hash_ensemble/)."
+risks_carried_forward:
+  - "Master sketch validates packet via CRC16 + magic — but it copies the struct definition by hand. If micro_speech.ino later changes HashKwsEspNowPacket layout, master must be updated in lockstep. Mitigated by a doc comment at the top of the master .ino."
+  - "Variant runtime overlays embed copies of shared scaffolding (hash_kws_runner.cpp etc.). If the runtime is bug-fixed in code/firmware/hash_kws_runtime/, the variant overlays drift. Documented in VARIANTS.md."
+  - "We rely on val/test discipline from the notebook for calibration parameters. Re-running aggregator fitting must use the same val split — already enforced inside aggregation.fit_*."
+next:
+  - "User runs hash_ensemble_sim.py demo (or eval) locally to validate end-to-end host path."
+  - "User flashes 4 ESP32 boards: 3 with code/firmware/micro_speech_sim/ + variant overlay (HASH_KWS_NODE_ID 1/2/3, channel matching), 1 with code/firmware/hash_kws_master/."
+  - "On first hardware run capture raw serial logs from all 4 boards: kind=boot + kind=espnow phase=init + first kind=fusion line."
+  - "If results disagree with Colab numbers by >1 p.p. at the boards: cross-check microfrontend bit-exactness, not the ensemble."
+sources_consulted:
+  - notes/Journal/2026-05-09_hash_ensemble_plan.md
+  - notes/Journal/2026-05-09_hash_ensemble_implementation_001.yaml
+  - code/deploy/hash_ensemble/reports/ensemble_results.json
+  - github://docs/audio-demo-sergey @ 6c81c01

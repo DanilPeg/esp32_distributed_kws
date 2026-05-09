@@ -1,0 +1,78 @@
+entry_id: 2026-05-09_hash_ensemble_implementation_001
+date: '2026-05-09'
+domain: ml
+topic: hash_ensemble_3_models_implementation_landed
+status: code_done_pending_colab_run
+summary: |
+  Locked plan v2 (notes/Journal/2026-05-09_hash_ensemble_plan.md) implemented
+  end-to-end except for the actual Colab training run. Three near-homogeneous
+  HashedNet KWS recipes are wired (only PW codebooks and seed differ); a Colab
+  notebook trains them with shared teacher + cached logits, evaluates 7
+  aggregators (incl. new temperature-scaled mean and learned 3-weight head),
+  and exports per-variant firmware bundles. Host simulator + MCU C++
+  aggregator + PS1 variant selector are landed; numpy and C++ aggregators
+  agree on 6 fixed test vectors.
+inputs:
+  baseline_recipe: hn95_kd128_layerwise_signed_residual
+  baseline_test_acc_user_reported: 0.9325
+  research_source: code/analysis/hash_ensemble/NOTES.md
+decisions_implemented:
+  - "Plan v2 switch: from hetero-K (per-node small/base/large) to near-homo (PW-perturbed) for accuracy."
+  - "Three variants ens_a/ens_b/ens_c: identical stem/DW/linear codebooks (512/(288,256,224,192)/512), only PW shifts -20%/baseline/+13% and seed varies (13/29/47)."
+  - "Single teacher trained once (anchored to ens_b); the other two students reload the same checkpoint via TEACHER_CHECKPOINT_PATH and reuse cached logits via the existing fingerprint-keyed cache."
+  - "Headline aggregator stays mean_logits per research; added two new ones — per-model temperature scaling fitted on val, and softmax-parameterized 3-weight head trained on val with manual numpy SGD."
+  - "Holdout discipline: calibration / learned weights only ever see the validation split."
+files_added:
+  python_modules:
+    - code/training/hash_ensemble/__init__.py
+    - code/training/hash_ensemble/ensemble_recipes.py
+    - code/training/hash_ensemble/aggregation.py
+    - code/training/hash_ensemble/build_ensemble_notebook.py
+    - code/scripts/hash_ensemble_sim.py
+    - code/firmware/hash_kws_aggregator/test_aggregator_match.py
+  generated_artifacts:
+    - code/training/hash_ensemble/hash_ensemble_train_colab.ipynb (332 KB, 17 cells)
+  cpp_module:
+    - code/firmware/hash_kws_aggregator/hash_ensemble_aggregator.h
+    - code/firmware/hash_kws_aggregator/hash_ensemble_aggregator.cpp
+    - code/firmware/hash_kws_aggregator/test_aggregator_main.cpp
+    - code/firmware/hash_kws_aggregator/README.md
+  ops:
+    - code/scripts/select_hash_kws_variant.ps1
+    - code/firmware/hash_kws_runtime/VARIANTS.md
+verification_local:
+  - "py_compile clean on every new .py module (ensemble_recipes, aggregation, build_ensemble_notebook, hash_ensemble_sim, test_aggregator_match)."
+  - "Notebook builder regenerates a 17-cell .ipynb; every code cell ast.parse-clean."
+  - "ensemble_recipes built end-to-end: 3 recipes verified to differ only in PW codebooks and seed; compact params 8780/9804/10828, virtual 72832 across all three (MAC budget identical)."
+  - "aggregation.evaluate_aggregators on synthetic data: best single 0.76 → mean_logits 0.84, mean_probs 0.89, temperature_scaled 0.89, learned_weights 0.90, oracle 0.92 — sanity correct."
+  - "C++ aggregator compiles with g++ 9.2 -Wall -Wextra; six fixed-vector cases (mean_logits / temperature_scaled / learned_weights, including disagreement scenarios) match numpy reference labels."
+  - "Host simulator smoke run (no checkpoints) on 30 synthetic samples writes node{1,2,3}/events.jsonl + decisions.jsonl + cluster/state.json under the same paths the live dashboard already reads; ensemble top1 = 30/30 on the easy synthetic split."
+  - "PS1 variant selector dry-run errors out cleanly when bundles don't exist yet — informative message."
+verification_pending:
+  - "Colab run of hash_ensemble_train_colab.ipynb on real Speech Commands v0.02 (training, not local)."
+  - "Three real ESP32 boards each flashed with a different variant via select_hash_kws_variant.ps1."
+  - "Master role on one board (or one host) running hash_ensemble_aggregator.cpp with the auto-generated aggregator_params.h."
+artifact_contract:
+  per_variant_disk_layout:
+    student_best_pt: "code/training/hash_runs/<tag>/student_best.pt"
+    library_bundle:  "code/training/hash_artifacts/<tag>/hash_kws_student_student.{pt,_metadata.json}"
+    firmware_bundle: "code/firmware/hash_kws_runtime_<variant>/{hash_model_data.{cpp,h}, hash_model_settings.{cpp,h}, hash_model_export_metadata.json, hash_model_types.h}"
+  ensemble_artifacts:
+    ensemble_results_json: "code/training/hash_artifacts/hash_ensemble/ensemble_results.json"
+    aggregator_params_h:   "code/training/hash_artifacts/hash_ensemble/aggregator_params.h"
+    plots:                 "aggregator_comparison.png + pairwise_disagreement.png"
+    drive_zip:             "DRIVE_CACHE_ROOT/runs/hash_ensemble_bundle.zip"
+risks_carried_forward:
+  - "Cached teacher logits cache key includes feature/dataset+teacher fingerprint. As long as the three students share the same teacher checkpoint and same feature/dataset config (they do), the cache is reused. If a future change perturbs feature/dataset, the cache gets rebuilt for each student — slow but correct."
+  - "MCU aggregator uses Q8.8 transport for score/margin int16; numbers match numpy by label, not by exact float (documented in test harness)."
+next:
+  - "User runs hash_ensemble_train_colab.ipynb in Colab; downloads hash_ensemble_bundle.zip."
+  - "User unpacks 3 firmware bundles + aggregator_params.h, flashes 3 boards via select_hash_kws_variant.ps1, runs micro_speech.ino with HASH_KWS_USE_ESPNOW=1 + ensemble aggregator on the master role."
+  - "Validate ensemble_results.json shows N=3 super-bagging dispersion behaviour expected from the research (×3.84 std reduction at N=3 was the headline)."
+sources_consulted:
+  - notes/Journal/2026-05-09_hash_ensemble_plan.md
+  - notes/Journal/2026-04-24_ml_001.yaml
+  - notes/Journal/2026-04-25_perf_pass4_003.yaml
+  - code/analysis/hash_ensemble/NOTES.md
+  - code/training/hashednet95/hashednet95_recipes.py
+  - code/training/hash_kws_lab/{config,trainer,models,export,reporting,data}.py
