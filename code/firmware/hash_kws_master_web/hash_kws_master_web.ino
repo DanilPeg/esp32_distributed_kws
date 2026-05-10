@@ -74,6 +74,13 @@
 // demux per-node telemetry from a single USB cable on the master.
 #define HASH_KWS_MASTER_FORWARD_NODE_EVENTS 1
 #endif
+#ifndef HASH_KWS_AGG_NOISE_BOOST
+// Logit-domain bias added to noise classes (unknown / silence) before
+// picking top1. Suppresses false positives on real keywords when the
+// ensemble is in a low-confidence state. Set to 0 to disable. Typical
+// useful range: 8..32 (logit units, per-channel int8 mean).
+#define HASH_KWS_AGG_NOISE_BOOST 24.0f
+#endif
 #ifndef HASH_KWS_WIFI_MODE
 #define HASH_KWS_WIFI_MODE 1   // 1 = STA (default), 0 = AP
 #endif
@@ -325,9 +332,9 @@ static void onDataRecv(const uint8_t* /*mac*/, const uint8_t* data, int len) {
   slot.packets++;
 
 #if HASH_KWS_MASTER_FORWARD_NODE_EVENTS
-  const char* kind_str = (p.kind == 2) ? "emit"
-                       : (p.kind == 1) ? "episode"
-                       : "infer";
+  // 1=infer, 2=emit. Episode state is signalled as a flag bit in p.flags,
+  // not as a kind value, so kind=episode never appears on the wire.
+  const char* kind_str = (p.kind == 2) ? "emit" : "infer";
   const char* label_str = (p.label < HASH_KWS_AGG_NUM_CLASSES)
                           ? kCategoryLabels[p.label]
                           : "?";
@@ -390,8 +397,9 @@ static void pollAggregator() {
 
   rgbForLabel(out.label);
   Serial.printf(
-      "hash_evt kind=fusion node=master label=%s score=%d margin=%d voters=%d mode=%d packets=%lu rejected=%lu\n",
+      "hash_evt kind=fusion node=master label=%s score=%d margin=%d voters=%d window_total=%u mode=%d packets=%lu rejected=%lu\n",
       kCategoryLabels[out.label], out.score, out.margin, out.num_voters,
+      static_cast<unsigned>(out.total_in_window),
       static_cast<int>(out.mode_used),
       static_cast<unsigned long>(g_packets_received),
       static_cast<unsigned long>(g_packets_rejected));
@@ -496,8 +504,9 @@ void setup() {
   pinMode(LED_RGB_PIN, OUTPUT);
   rgbForLabel(11);  // silence
 
-  Serial.printf("hash_evt kind=boot node=master role=master_aggregator channel=%d agg_mode=%d wifi_mode=%d\n",
-                HASH_KWS_ESPNOW_CHANNEL, HASH_KWS_AGG_MODE, HASH_KWS_WIFI_MODE);
+  Serial.printf("hash_evt kind=boot node=master role=master_aggregator channel=%d agg_mode=%d wifi_mode=%d noise_boost=%.1f\n",
+                HASH_KWS_ESPNOW_CHANNEL, HASH_KWS_AGG_MODE, HASH_KWS_WIFI_MODE,
+                static_cast<double>(HASH_KWS_AGG_NOISE_BOOST));
 
   for (uint8_t i = 0; i < HASH_KWS_AGG_NUM_NODES; ++i) {
     g_nodes[i] = PerNodeState{};
@@ -512,6 +521,10 @@ void setup() {
   }
 
   g_aggregator.reset(HASH_KWS_AGG_NUM_NODES, HASH_KWS_AGG_NUM_CLASSES, HASH_KWS_AGG_WINDOW_MS);
+  // Noise classes for KWS-12: index 10 = "unknown", 11 = "silence".
+  static const uint8_t kHashKwsNoiseClasses[2] = {10, 11};
+  g_aggregator.setNoiseClasses(kHashKwsNoiseClasses, 2);
+  g_aggregator.setNoiseBoost(static_cast<float>(HASH_KWS_AGG_NOISE_BOOST));
 #if HASH_KWS_AGG_MODE == 1
   g_aggregator.setTemperatures(kHashEnsembleTemperatures);
   g_aggregator.setMode(hash_kws_ensemble::Mode::kModeTemperatureScaled);

@@ -9,15 +9,6 @@ namespace {
 
 constexpr int kFixedShift = 8;  // Q8.8 fixed-point for transport-friendly scores
 
-inline int rank_source(SourceKind s) {
-  switch (s) {
-    case SourceKind::kEmit:    return 2;
-    case SourceKind::kEpisode: return 1;
-    case SourceKind::kInfer:   return 0;
-  }
-  return 0;
-}
-
 // Convert int8 logits -> float view, scale by 1/T if requested.
 void load_logits(const Vote& v, uint8_t num_classes, const float scale, float* out) {
   for (uint8_t c = 0; c < num_classes; ++c) {
@@ -65,6 +56,10 @@ void top2(const float* x, uint8_t n, uint8_t* top1_idx, float* top1_val,
   }
 }
 
+inline bool slot_in_window(const Vote& v, uint32_t now_ms, uint32_t window_ms) {
+  return v.has_data && (now_ms - v.host_arrival_ms) <= window_ms;
+}
+
 }  // namespace
 
 void Aggregator::reset(uint8_t num_nodes, uint8_t num_classes, uint32_t window_ms) {
@@ -76,14 +71,25 @@ void Aggregator::reset(uint8_t num_nodes, uint8_t num_classes, uint32_t window_m
   mode_ = Mode::kModeMeanLogits;
   have_temperatures_ = false;
   have_learned_weights_ = false;
+  noise_boost_ = 0.0f;
+  num_noise_classes_ = 0;
   for (uint8_t i = 0; i < HASH_KWS_AGG_MAX_NODES; ++i) {
     temperatures_[i] = 1.f;
     learned_weights_[i] = 1.f / static_cast<float>(num_nodes_ ? num_nodes_ : 1);
-    votes_[i].has_data = 0;
-    votes_[i].node_id = 0;
-    votes_[i].source = SourceKind::kInfer;
-    votes_[i].device_time_ms = 0;
-    votes_[i].host_arrival_ms = 0;
+    rings_[i].head = 0;
+    rings_[i].count = 0;
+    for (uint8_t s = 0; s < HASH_KWS_AGG_RING_DEPTH; ++s) {
+      Vote& v = rings_[i].slots[s];
+      v.has_data = 0;
+      v.node_id = 0;
+      v.source = SourceKind::kInfer;
+      v.device_time_ms = 0;
+      v.host_arrival_ms = 0;
+      for (uint8_t c = 0; c < HASH_KWS_AGG_MAX_CLASSES; ++c) v.logits[c] = 0;
+    }
+  }
+  for (uint8_t i = 0; i < HASH_KWS_AGG_MAX_CLASSES; ++i) {
+    noise_classes_[i] = 0;
   }
 }
 
@@ -93,6 +99,22 @@ void Aggregator::setTemperatures(const float* temperatures) {
     temperatures_[i] = (temperatures[i] > 1e-3f) ? temperatures[i] : 1.f;
   }
   have_temperatures_ = true;
+}
+
+void Aggregator::setNoiseBoost(float boost) {
+  noise_boost_ = boost;
+}
+
+void Aggregator::setNoiseClasses(const uint8_t* class_indices, uint8_t count) {
+  if (!class_indices) {
+    num_noise_classes_ = 0;
+    return;
+  }
+  if (count > HASH_KWS_AGG_MAX_CLASSES) count = HASH_KWS_AGG_MAX_CLASSES;
+  num_noise_classes_ = count;
+  for (uint8_t i = 0; i < count; ++i) {
+    noise_classes_[i] = class_indices[i];
+  }
 }
 
 void Aggregator::setLearnedWeights(const float* weights) {
@@ -119,14 +141,8 @@ bool Aggregator::submit(uint8_t node_id, SourceKind source,
   if (num_classes != num_classes_) return false;
   if (node_id == 0 || node_id > num_nodes_) return false;
 
-  Vote& slot = votes_[node_id - 1];
-  // If we already have a fresh vote from this node within window, prefer the
-  // higher-rank source (emit > episode > infer). Otherwise overwrite.
-  const bool slot_fresh = slot.has_data &&
-      (host_arrival_ms - slot.host_arrival_ms) <= window_ms_;
-  if (slot_fresh && rank_source(source) < rank_source(slot.source)) {
-    return false;
-  }
+  NodeRing& ring = rings_[node_id - 1];
+  Vote& slot = ring.slots[ring.head];
   slot.node_id = node_id;
   slot.has_data = 1;
   slot.source = source;
@@ -135,6 +151,8 @@ bool Aggregator::submit(uint8_t node_id, SourceKind source,
   for (uint8_t c = 0; c < num_classes_; ++c) {
     slot.logits[c] = logits[c];
   }
+  ring.head = static_cast<uint8_t>((ring.head + 1) % HASH_KWS_AGG_RING_DEPTH);
+  if (ring.count < HASH_KWS_AGG_RING_DEPTH) ring.count++;
   return true;
 }
 
@@ -142,6 +160,7 @@ void Aggregator::resolve(uint32_t now_ms, Resolved* out) const {
   if (!out) return;
   out->has_decision = 0;
   out->num_voters = 0;
+  out->total_in_window = 0;
   out->label = 0;
   out->score = 0;
   out->margin = 0;
@@ -150,18 +169,21 @@ void Aggregator::resolve(uint32_t now_ms, Resolved* out) const {
 
   if (num_nodes_ == 0 || num_classes_ == 0) return;
 
-  // Determine which slots fall within the window.
-  bool in_window[HASH_KWS_AGG_MAX_NODES] = {false};
+  // Per-node count of in-window slots. voter_count = nodes with >= 1 fresh slot.
+  uint8_t per_node_count[HASH_KWS_AGG_MAX_NODES] = {0};
   uint8_t voter_count = 0;
+  uint16_t total_in_window = 0;
   for (uint8_t i = 0; i < num_nodes_; ++i) {
-    if (votes_[i].has_data && (now_ms - votes_[i].host_arrival_ms) <= window_ms_) {
-      in_window[i] = true;
-      ++voter_count;
+    const NodeRing& ring = rings_[i];
+    uint8_t fresh = 0;
+    for (uint8_t s = 0; s < ring.count; ++s) {
+      if (slot_in_window(ring.slots[s], now_ms, window_ms_)) ++fresh;
     }
+    per_node_count[i] = fresh;
+    if (fresh > 0) ++voter_count;
+    total_in_window = static_cast<uint16_t>(total_in_window + fresh);
   }
-  if (voter_count < 2) return;  // require at least 2 voters
-
-  float aggregated[HASH_KWS_AGG_MAX_CLASSES] = {0};
+  if (voter_count < 2) return;
 
   Mode effective_mode = mode_;
   if (effective_mode == Mode::kModeTemperatureScaled && !have_temperatures_) {
@@ -172,25 +194,51 @@ void Aggregator::resolve(uint32_t now_ms, Resolved* out) const {
   }
   out->mode_used = effective_mode;
 
+  float aggregated[HASH_KWS_AGG_MAX_CLASSES] = {0};
+
   if (effective_mode == Mode::kModeTemperatureScaled) {
-    // Mean of softmax(logits_k / T_k) — output is probabilities.
+    // Per-slot softmax(logits / T_node), accumulated over EVERY in-window slot
+    // across all nodes, then averaged.
     float vec[HASH_KWS_AGG_MAX_CLASSES];
-    uint8_t n_used = 0;
+    uint16_t n_used = 0;
     for (uint8_t i = 0; i < num_nodes_; ++i) {
-      if (!in_window[i]) continue;
+      const NodeRing& ring = rings_[i];
       const float scale = 1.f / temperatures_[i];
-      load_logits(votes_[i], num_classes_, scale, vec);
-      softmax_in_place(vec, num_classes_);
-      for (uint8_t c = 0; c < num_classes_; ++c) aggregated[c] += vec[c];
-      ++n_used;
+      for (uint8_t s = 0; s < ring.count; ++s) {
+        const Vote& v = ring.slots[s];
+        if (!slot_in_window(v, now_ms, window_ms_)) continue;
+        load_logits(v, num_classes_, scale, vec);
+        softmax_in_place(vec, num_classes_);
+        for (uint8_t c = 0; c < num_classes_; ++c) aggregated[c] += vec[c];
+        ++n_used;
+      }
     }
-    const float inv = (n_used > 0) ? (1.f / static_cast<float>(n_used)) : 0.f;
-    for (uint8_t c = 0; c < num_classes_; ++c) aggregated[c] *= inv;
+    if (n_used > 0) {
+      const float inv = 1.f / static_cast<float>(n_used);
+      for (uint8_t c = 0; c < num_classes_; ++c) aggregated[c] *= inv;
+    }
   } else if (effective_mode == Mode::kModeLearnedWeights) {
-    // Σ w_k * logits_k — output is logits.
+    // First average each node's in-window slots into a per-node mean vector,
+    // then take the weighted sum across nodes (using learned_weights_).
+    // This keeps the "per-node weight" semantics intact while benefiting
+    // from temporal averaging within each node.
+    float per_node_mean[HASH_KWS_AGG_MAX_NODES][HASH_KWS_AGG_MAX_CLASSES] = {{0}};
+    for (uint8_t i = 0; i < num_nodes_; ++i) {
+      if (per_node_count[i] == 0) continue;
+      const NodeRing& ring = rings_[i];
+      for (uint8_t s = 0; s < ring.count; ++s) {
+        const Vote& v = ring.slots[s];
+        if (!slot_in_window(v, now_ms, window_ms_)) continue;
+        for (uint8_t c = 0; c < num_classes_; ++c) {
+          per_node_mean[i][c] += static_cast<float>(v.logits[c]);
+        }
+      }
+      const float inv = 1.f / static_cast<float>(per_node_count[i]);
+      for (uint8_t c = 0; c < num_classes_; ++c) per_node_mean[i][c] *= inv;
+    }
     float weight_sum = 0.f;
     for (uint8_t i = 0; i < num_nodes_; ++i) {
-      if (in_window[i]) weight_sum += learned_weights_[i];
+      if (per_node_count[i] > 0) weight_sum += learned_weights_[i];
     }
     if (weight_sum <= 0.f) {
       effective_mode = Mode::kModeMeanLogits;
@@ -198,27 +246,53 @@ void Aggregator::resolve(uint32_t now_ms, Resolved* out) const {
     } else {
       const float renorm = 1.f / weight_sum;
       for (uint8_t i = 0; i < num_nodes_; ++i) {
-        if (!in_window[i]) continue;
+        if (per_node_count[i] == 0) continue;
         const float w = learned_weights_[i] * renorm;
         for (uint8_t c = 0; c < num_classes_; ++c) {
-          aggregated[c] += w * static_cast<float>(votes_[i].logits[c]);
+          aggregated[c] += w * per_node_mean[i][c];
         }
       }
     }
   }
 
   if (effective_mode == Mode::kModeMeanLogits) {
-    // Plain mean of int8 logits — output is logits.
-    uint8_t n_used = 0;
+    // Mean of int8 logits over EVERY in-window slot from every node — not
+    // just the latest one per node. With ~5 invokes/sec and a 1.2 s window
+    // this averages ~15 logit vectors instead of 3, smoothing out one-off
+    // noise-driven drifts.
+    for (uint8_t c = 0; c < num_classes_; ++c) aggregated[c] = 0.f;
+    uint16_t n_used = 0;
     for (uint8_t i = 0; i < num_nodes_; ++i) {
-      if (!in_window[i]) continue;
-      for (uint8_t c = 0; c < num_classes_; ++c) {
-        aggregated[c] += static_cast<float>(votes_[i].logits[c]);
+      const NodeRing& ring = rings_[i];
+      for (uint8_t s = 0; s < ring.count; ++s) {
+        const Vote& v = ring.slots[s];
+        if (!slot_in_window(v, now_ms, window_ms_)) continue;
+        for (uint8_t c = 0; c < num_classes_; ++c) {
+          aggregated[c] += static_cast<float>(v.logits[c]);
+        }
+        ++n_used;
       }
-      ++n_used;
     }
-    const float inv = (n_used > 0) ? (1.f / static_cast<float>(n_used)) : 0.f;
-    for (uint8_t c = 0; c < num_classes_; ++c) aggregated[c] *= inv;
+    if (n_used > 0) {
+      const float inv = 1.f / static_cast<float>(n_used);
+      for (uint8_t c = 0; c < num_classes_; ++c) aggregated[c] *= inv;
+    }
+  }
+
+  // Optional: bias toward noise classes (unknown / silence). Only meaningful
+  // for logit-domain modes; temperature_scaled lives in [0..1] probabilities.
+  if (num_noise_classes_ > 0 && noise_boost_ != 0.0f) {
+    const bool logit_domain =
+        (effective_mode == Mode::kModeMeanLogits) ||
+        (effective_mode == Mode::kModeLearnedWeights);
+    if (logit_domain) {
+      for (uint8_t i = 0; i < num_noise_classes_; ++i) {
+        const uint8_t idx = noise_classes_[i];
+        if (idx < num_classes_) {
+          aggregated[idx] += noise_boost_;
+        }
+      }
+    }
   }
 
   uint8_t top1_idx, top2_idx;
@@ -227,6 +301,7 @@ void Aggregator::resolve(uint32_t now_ms, Resolved* out) const {
 
   out->has_decision = 1;
   out->num_voters = voter_count;
+  out->total_in_window = static_cast<uint8_t>(total_in_window > 255 ? 255 : total_in_window);
   out->label = top1_idx;
   // Scale by 256 for integer transport while preserving sign.
   const float top1_q = top1_val * static_cast<float>(1 << kFixedShift);

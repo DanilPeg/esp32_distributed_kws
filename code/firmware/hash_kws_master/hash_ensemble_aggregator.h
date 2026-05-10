@@ -7,7 +7,10 @@
 //
 // Memory model:
 //   - All buffers are statically sized at compile time; no heap allocation.
-//   - One slot per (node_id, last packet) — newer packets overwrite older.
+//   - Per-node ring of HASH_KWS_AGG_RING_DEPTH packets (default 5). At the
+//     ~218 ms invoke rate of pass-4 SIMD this comfortably covers the whole
+//     1.2 s aggregation window — every packet that landed in the window is
+//     averaged at resolve() time, instead of just the latest one.
 //   - Packets older than `window_ms` are ignored at resolve time.
 //
 // Aggregator modes:
@@ -33,6 +36,13 @@
 #define HASH_KWS_AGG_MAX_CLASSES 12
 #endif
 
+// Per-node ring depth. With ~218 ms invoke rate and 1.2 s window,
+// 5 covers the typical full-window history per node. Bump if the
+// inference rate ever doubles.
+#ifndef HASH_KWS_AGG_RING_DEPTH
+#define HASH_KWS_AGG_RING_DEPTH 5
+#endif
+
 namespace hash_kws_ensemble {
 
 enum class Mode : uint8_t {
@@ -56,9 +66,20 @@ struct Vote {
   int8_t   logits[HASH_KWS_AGG_MAX_CLASSES];
 };
 
+// Per-node ring buffer of recent votes. submit() pushes a new vote at
+// `head`, advancing it modulo HASH_KWS_AGG_RING_DEPTH. resolve() then
+// averages logits over every slot whose host_arrival_ms is still inside
+// the window — typically all 5 slots in steady state.
+struct NodeRing {
+  uint8_t  head;
+  uint8_t  count;
+  Vote     slots[HASH_KWS_AGG_RING_DEPTH];
+};
+
 struct Resolved {
   uint8_t  has_decision;
-  uint8_t  num_voters;
+  uint8_t  num_voters;        // distinct nodes with at least 1 in-window slot
+  uint8_t  total_in_window;   // total number of slots averaged across all nodes
   uint8_t  label;
   int16_t  score;       // top1 from aggregated logits, scaled by 256 (Q8.8)
   int16_t  margin;      // top1 - top2, same scaling
@@ -80,6 +101,17 @@ class Aggregator {
 
   void setMode(Mode mode) { mode_ = mode; }
   Mode mode() const { return mode_; }
+
+  // Optional: bias the aggregated logits toward "noise" classes (typically
+  // unknown / silence). Positive boost makes those classes win more often,
+  // suppressing false positives on real keywords when the ensemble is in a
+  // low-confidence state. Has no effect when boost == 0 or no noise classes
+  // are registered. Only applied for logit-domain modes (mean_logits and
+  // learned_weights); temperature_scaled is in probability domain and
+  // ignores the boost.
+  void setNoiseBoost(float boost);
+  void setNoiseClasses(const uint8_t* class_indices, uint8_t count);
+  float noiseBoost() const { return noise_boost_; }
 
   // Insert a vote. node_id is 1-based to match firmware conventions.
   // logits is a length-num_classes int8 vector. Returns false if rejected.
@@ -104,7 +136,10 @@ class Aggregator {
   bool have_learned_weights_ = false;
   float temperatures_[HASH_KWS_AGG_MAX_NODES] = {0};
   float learned_weights_[HASH_KWS_AGG_MAX_NODES] = {0};
-  Vote votes_[HASH_KWS_AGG_MAX_NODES] = {};
+  NodeRing rings_[HASH_KWS_AGG_MAX_NODES] = {};
+  float noise_boost_ = 0.0f;
+  uint8_t noise_classes_[HASH_KWS_AGG_MAX_CLASSES] = {0};
+  uint8_t num_noise_classes_ = 0;
 };
 
 }  // namespace hash_kws_ensemble
