@@ -81,6 +81,22 @@ class Aggregator {
   void setMode(Mode mode) { mode_ = mode; }
   Mode mode() const { return mode_; }
 
+  // Minimum number of voters within window required to emit a decision.
+  // Default 2. Set to 1 to allow single-node debugging; 3 for strict mode.
+  void setMinVoters(uint8_t min_voters) {
+    min_voters_ = (min_voters == 0) ? 1 : min_voters;
+  }
+  uint8_t minVoters() const { return min_voters_; }
+
+  // Bitmask of class indices that the aggregator must never pick as top1
+  // (or top2 when computing margin). Bit `i` set ⇒ class `i` is "noise".
+  // Default 0 (no masking). Typically used to drop "unknown" / "silence"
+  // from the KWS label set so the fusion never elects a noise label.
+  // The masked classes are still included in the mean_logits computation,
+  // only their selection at the top is suppressed.
+  void setNoiseMask(uint16_t noise_mask) { noise_mask_ = noise_mask; }
+  uint16_t noiseMask() const { return noise_mask_; }
+
   // Insert a vote. node_id is 1-based to match firmware conventions.
   // logits is a length-num_classes int8 vector. Returns false if rejected.
   bool submit(uint8_t node_id, SourceKind source,
@@ -102,6 +118,8 @@ class Aggregator {
   Mode mode_ = Mode::kModeMeanLogits;
   bool have_temperatures_ = false;
   bool have_learned_weights_ = false;
+  uint8_t min_voters_ = 2;
+  uint16_t noise_mask_ = 0;
   float temperatures_[HASH_KWS_AGG_MAX_NODES] = {0};
   float learned_weights_[HASH_KWS_AGG_MAX_NODES] = {0};
   Vote votes_[HASH_KWS_AGG_MAX_NODES] = {};

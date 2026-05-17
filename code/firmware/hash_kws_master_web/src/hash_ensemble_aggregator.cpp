@@ -43,12 +43,18 @@ void softmax_in_place(float* x, uint8_t n) {
   for (uint8_t i = 0; i < n; ++i) x[i] *= inv_sum;
 }
 
-// Find top-1, top-2 from a float vector.
-void top2(const float* x, uint8_t n, uint8_t* top1_idx, float* top1_val,
+// Find top-1, top-2 from a float vector, skipping any index whose bit is
+// set in `mask`. Both top1 and top2 are picked from the non-masked subset
+// so the margin reflects "how far ahead of the runner-up real command",
+// not "how far ahead of silence". If every class is masked we fall back
+// to picking class 0 — pathological config, but keeps the contract.
+void top2(const float* x, uint8_t n, uint16_t mask,
+          uint8_t* top1_idx, float* top1_val,
           uint8_t* top2_idx, float* top2_val) {
-  *top1_idx = 0; *top1_val = x[0];
-  *top2_idx = 0; *top2_val = -INFINITY;
-  for (uint8_t i = 1; i < n; ++i) {
+  *top1_idx = 0xFF; *top1_val = -INFINITY;
+  *top2_idx = 0xFF; *top2_val = -INFINITY;
+  for (uint8_t i = 0; i < n; ++i) {
+    if (mask & (uint16_t)(1u << i)) continue;
     if (x[i] > *top1_val) {
       *top2_val = *top1_val;
       *top2_idx = *top1_idx;
@@ -59,9 +65,14 @@ void top2(const float* x, uint8_t n, uint8_t* top1_idx, float* top1_val,
       *top2_idx = i;
     }
   }
-  if (*top2_val == -INFINITY) {
-    *top2_val = *top1_val;
+  if (*top1_idx == 0xFF) {
+    // Everything was masked. Degenerate — emit class 0 with whatever value.
+    *top1_idx = 0;
+    *top1_val = x[0];
+  }
+  if (*top2_idx == 0xFF || *top2_val == -INFINITY) {
     *top2_idx = *top1_idx;
+    *top2_val = *top1_val;
   }
 }
 
@@ -76,6 +87,8 @@ void Aggregator::reset(uint8_t num_nodes, uint8_t num_classes, uint32_t window_m
   mode_ = Mode::kModeMeanLogits;
   have_temperatures_ = false;
   have_learned_weights_ = false;
+  min_voters_ = 2;
+  noise_mask_ = 0;
   for (uint8_t i = 0; i < HASH_KWS_AGG_MAX_NODES; ++i) {
     temperatures_[i] = 1.f;
     learned_weights_[i] = 1.f / static_cast<float>(num_nodes_ ? num_nodes_ : 1);
@@ -159,7 +172,10 @@ void Aggregator::resolve(uint32_t now_ms, Resolved* out) const {
       ++voter_count;
     }
   }
-  if (voter_count < 2) return;  // require at least 2 voters
+  // Surface voter count even on early returns so callers can diagnose why
+  // a decision didn't fire (no_voters / single_voter / threshold not met).
+  out->num_voters = voter_count;
+  if (voter_count < min_voters_) return;
 
   float aggregated[HASH_KWS_AGG_MAX_CLASSES] = {0};
 
@@ -223,7 +239,8 @@ void Aggregator::resolve(uint32_t now_ms, Resolved* out) const {
 
   uint8_t top1_idx, top2_idx;
   float top1_val, top2_val;
-  top2(aggregated, num_classes_, &top1_idx, &top1_val, &top2_idx, &top2_val);
+  top2(aggregated, num_classes_, noise_mask_,
+       &top1_idx, &top1_val, &top2_idx, &top2_val);
 
   out->has_decision = 1;
   out->num_voters = voter_count;
