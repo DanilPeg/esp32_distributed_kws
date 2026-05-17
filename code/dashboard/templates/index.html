@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hash KWS Master (USB bridge)</title>
+<style>
+:root{
+  --bg:#111;--card:#1c1c1e;--border:#2a2a2e;
+  --txt:#e0e0e0;--sub:#808080;
+  --green:#41d287;--amber:#ffae3a;--red:#f06363;--blue:#6ec3ff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font:14px/1.5 system-ui,sans-serif;padding:14px;max-width:900px;margin:0 auto}
+a{color:var(--blue)}
+
+/* Header */
+.hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;gap:8px}
+.hdr h1{font-size:17px;font-weight:700;line-height:1.2}
+.hdr .sub{font-size:11px;color:var(--sub);margin-top:2px}
+.badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:12px;white-space:nowrap;flex-shrink:0;margin-top:2px}
+.badge.live{background:#1a3d2a;color:var(--green)}
+.badge.disc{background:#3a1a1a;color:var(--red)}
+
+/* Counters strip */
+.ctr{background:var(--card);border:1px solid var(--border);border-radius:8px;
+     padding:9px 14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--sub)}
+.ctr span{color:var(--txt);font-weight:600}
+
+/* Ensemble hero */
+.hero{background:linear-gradient(135deg,#152233 0%,#0f151c 100%);
+      border:1px solid var(--border);border-radius:10px;
+      padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:18px;
+      transition:opacity .3s}
+.hero.faded{opacity:.45}
+.hero-left{flex-shrink:0}
+.hero-cap{font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px}
+.hero-lbl{font-size:44px;font-weight:800;line-height:1;letter-spacing:-0.5px}
+.hero-right{flex:1;display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--sub);min-width:0}
+.hero-right .row{display:flex;flex-wrap:wrap;gap:10px}
+.hero-right b{color:var(--txt);font-weight:600}
+.mode-badge{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;
+            letter-spacing:.5px;padding:2px 7px;border-radius:10px;
+            background:#22344a;color:var(--blue);border:1px solid #2c4760}
+
+/* Node tiles */
+.nodes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+@media(max-width:520px){.nodes{grid-template-columns:1fr}}
+.tile{background:var(--card);border:1px solid var(--border);border-left:4px solid #333;
+      border-radius:8px;padding:12px;transition:border-left-color .3s,opacity .3s}
+.tile.online{border-left-color:var(--green)}
+.tile.stale {border-left-color:var(--amber)}
+.tile.offline{border-left-color:var(--red);opacity:.62}
+.tile.never  {border-left-color:#3a3a3e;opacity:.55}
+.tile-head{font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.tile-lbl{font-size:30px;font-weight:800;margin-bottom:3px;line-height:1}
+.tile-meta{font-size:11px;color:var(--sub)}
+
+.sec{font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+
+/* Latency block */
+.lat-wrap{background:var(--card);border:1px solid var(--border);border-radius:8px;
+          padding:12px;margin-bottom:12px}
+.lat-row{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.lat-row:last-child{margin-bottom:0}
+.lat-name{font-size:11px;color:var(--sub);width:56px;flex-shrink:0}
+.lat-bar-bg{flex:1;height:6px;background:#222;border-radius:3px;overflow:hidden}
+.lat-bar{height:100%;border-radius:3px;transition:width .4s,background .4s}
+.lat-nums{font-size:11px;color:var(--sub);text-align:right;width:180px;flex-shrink:0;white-space:nowrap}
+
+/* Camera card */
+.cam-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;
+          padding:14px 16px;margin-bottom:12px;border-left:4px solid #5a6470;
+          transition:border-left-color .3s}
+.cam-wrap.armed {border-left-color:var(--amber)}
+.cam-wrap.active{border-left-color:var(--green)}
+.cam-wrap.fail  {border-left-color:var(--red)}
+.cam-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
+.cam-title{font-size:12px;color:var(--sub);text-transform:uppercase;letter-spacing:.7px}
+.cam-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}
+@media(max-width:520px){.cam-grid{grid-template-columns:1fr}}
+.cam-pri{padding-right:12px;border-right:1px solid var(--border)}
+@media(max-width:520px){.cam-pri{border-right:none;padding-right:0;border-bottom:1px solid var(--border);padding-bottom:10px}}
+.cam-cap{font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.cam-lbl{font-size:38px;font-weight:800;line-height:1;letter-spacing:-0.5px;margin-bottom:4px}
+.cam-sub{font-size:11px;color:var(--sub);font-family:ui-monospace,Menlo,monospace}
+.cam-meta{font-size:11px;color:var(--sub);margin-top:8px;display:flex;flex-wrap:wrap;gap:10px}
+.cam-meta b{color:var(--txt);font-weight:600}
+.cam-status{font-size:11px;color:var(--sub);margin-top:8px;font-family:ui-monospace,Menlo,monospace}
+.cam-trig{font-size:13px;color:var(--txt);margin-top:6px}
+.cam-trig b{color:var(--amber)}
+
+/* Fusion list */
+.fusion-wrap{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px}
+.f-item{display:flex;align-items:center;gap:10px;padding:5px 0;
+        border-bottom:1px solid var(--border);font-size:13px}
+.f-item:last-child{border-bottom:none}
+.f-lbl{font-weight:700;width:68px;flex-shrink:0}
+.f-meta{flex:1;font-size:11px;color:var(--sub)}
+.f-mode{font-size:10px;color:var(--blue);background:#22344a;border:1px solid #2c4760;
+        padding:1px 6px;border-radius:8px;font-weight:600;letter-spacing:.3px;flex-shrink:0}
+.f-time{font-size:11px;color:var(--sub);white-space:nowrap}
+.empty{font-size:12px;color:var(--sub);padding:4px 0}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div>
+    <h1>Hash KWS Master <span class="sub">(USB bridge → FastAPI)</span></h1>
+    <div class="sub">3 hashed students &mdash; ensemble aggregation + camera trigger</div>
+  </div>
+  <div id="badge" class="badge disc">&#9675; disconnected</div>
+</div>
+
+<div class="ctr">
+  <div>nodes&nbsp;<span id="c-nodes">&#x2014;</span></div>
+  <div>fusion&nbsp;<span id="c-fusion">&#x2014;</span></div>
+  <div>packets&nbsp;<span id="c-packets">&#x2014;</span></div>
+  <div>rejected&nbsp;<span id="c-rejected">&#x2014;</span></div>
+  <div>aggregator&nbsp;<span id="c-agg">&#x2014;</span></div>
+  <div>uptime&nbsp;<span id="c-up">&#x2014;</span></div>
+</div>
+
+<div class="hero" id="hero-wrap">
+  <div class="hero-left">
+    <div class="hero-cap">Ensemble (averaged across nodes)</div>
+    <div class="hero-lbl" id="hero-lbl" style="color:#5a6470">&#x2014;</div>
+  </div>
+  <div class="hero-right">
+    <div class="row">
+      <div>mode&nbsp;<span class="mode-badge" id="hero-mode">&#x2014;</span></div>
+      <div>voters&nbsp;<b id="hero-voters">&#x2014;</b></div>
+      <div>score&nbsp;<b id="hero-score">&#x2014;</b></div>
+      <div>margin&nbsp;<b id="hero-margin">&#x2014;</b></div>
+    </div>
+    <div class="row" style="font-size:11px">
+      <div>last&nbsp;<b id="hero-time">never</b></div>
+      <div>total&nbsp;decisions&nbsp;<b id="hero-total">0</b></div>
+    </div>
+  </div>
+</div>
+
+<div class="nodes">
+  <div class="tile" id="tile-0">
+    <div class="tile-head">Node 1 &mdash; ens_a</div>
+    <div class="tile-lbl" id="lbl-0" style="color:#5a6470">&#x2014;</div>
+    <div class="tile-meta" id="meta-0">no packets yet</div>
+  </div>
+  <div class="tile" id="tile-1">
+    <div class="tile-head">Node 2 &mdash; ens_b</div>
+    <div class="tile-lbl" id="lbl-1" style="color:#5a6470">&#x2014;</div>
+    <div class="tile-meta" id="meta-1">no packets yet</div>
+  </div>
+  <div class="tile" id="tile-2">
+    <div class="tile-head">Node 3 &mdash; ens_c</div>
+    <div class="tile-lbl" id="lbl-2" style="color:#5a6470">&#x2014;</div>
+    <div class="tile-meta" id="meta-2">no packets yet</div>
+  </div>
+</div>
+
+<div class="lat-wrap">
+  <div class="sec">Inference latency (invoke_ms per node, rolling 60 packets)</div>
+  <div id="lat-rows">
+    <div class="lat-row"><div class="lat-name">Node 1</div><div class="lat-bar-bg"><div class="lat-bar" style="width:0%"></div></div><div class="lat-nums">no data</div></div>
+    <div class="lat-row"><div class="lat-name">Node 2</div><div class="lat-bar-bg"><div class="lat-bar" style="width:0%"></div></div><div class="lat-nums">no data</div></div>
+    <div class="lat-row"><div class="lat-name">Node 3</div><div class="lat-bar-bg"><div class="lat-bar" style="width:0%"></div></div><div class="lat-nums">no data</div></div>
+  </div>
+</div>
+
+<div class="cam-wrap" id="cam-wrap">
+  <div class="cam-head">
+    <div>
+      <div class="cam-title">Camera node &mdash; triggered by KWS keyword</div>
+      <div class="cam-trig">trigger word: <b id="cam-trigword">&#x2014;</b></div>
+    </div>
+    <div id="cam-badge" class="badge disc">&#9675; idle</div>
+  </div>
+  <div class="cam-grid">
+    <div class="cam-pri">
+      <div class="cam-cap">Last reply (person / no_person)</div>
+      <div class="cam-lbl" id="cam-lbl" style="color:#5a6470">&#x2014;</div>
+      <div class="cam-sub" id="cam-sub">no replies yet</div>
+      <div class="cam-meta">
+        <span>triggers&nbsp;<b id="cam-trig-count">0</b></span>
+        <span>replies&nbsp;<b id="cam-rep-count">0</b></span>
+        <span>stale&nbsp;<b id="cam-stale-count">0</b></span>
+        <span>last&nbsp;<b id="cam-last-age">never</b></span>
+      </div>
+    </div>
+    <div>
+      <div class="cam-cap">Camera-side counters (via ESP-NOW heartbeat)</div>
+      <div class="cam-status" id="cam-status-detail">awaiting kind=cam_status broadcast&hellip;</div>
+      <div class="cam-meta">
+        <span>status&nbsp;pkts&nbsp;<b id="cam-status-count">0</b></span>
+        <span>cam&nbsp;ch&nbsp;<b id="cam-ch">&#x2014;</b></span>
+        <span>cam&nbsp;heap&nbsp;<b id="cam-heap">&#x2014;</b></span>
+        <span>cam&nbsp;psram&nbsp;<b id="cam-psram">&#x2014;</b></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="fusion-wrap">
+  <div class="sec">Fusion decisions (newest first)</div>
+  <div id="fusion-list"><div class="empty">No decisions yet</div></div>
+</div>
+
+<footer style="margin-top:16px;font-size:11px;color:var(--sub)">
+  <span>data source: USB bridge → <code>notes/Journal/hash_kws_telemetry|fusion|camera/</code> JSONL</span>
+</footer>
+
+<script>
+(function(){
+const COLORS={
+  yes:'#41d287',no:'#f06363',up:'#6ec3ff',down:'#ffae3a',
+  left:'#c5b3ff',right:'#ff85c8',on:'#b6ff63',off:'#888888',
+  stop:'#ff7373',go:'#4ad6ff',unknown:'#5a6470',silence:'#5a6470',
+  person:'#c5b3ff',no_person:'#f06363'
+};
+const AGG_NAMES=['mean_logits','temperature_scaled','learned_weights'];
+const LAT_MAX_MS=800;
+const STALE_MS=8000;
+const OFFLINE_MS=15000;
+const HERO_FADE_MS=20000;
+const MEANINGFUL_HOLD_MS=6000;
+const CAM_PULSE_MS=4000;
+const NOISE_LABELS=new Set(['unknown','silence']);
+function isNoise(l){ return !!l && NOISE_LABELS.has(l); }
+
+const nodes=[
+  {label:null,score:0,margin:0,packets:0,lastMs:null,lat:{min:0,med:0,p95:0,max:0,count:0},lastMeaningful:null,lastMeaningfulMs:0},
+  {label:null,score:0,margin:0,packets:0,lastMs:null,lat:{min:0,med:0,p95:0,max:0,count:0},lastMeaningful:null,lastMeaningfulMs:0},
+  {label:null,score:0,margin:0,packets:0,lastMs:null,lat:{min:0,med:0,p95:0,max:0,count:0},lastMeaningful:null,lastMeaningfulMs:0},
+];
+let fusionList=[];
+let lastHero=null;
+let cameraState=null;
+let camPulseTimeout=null;
+
+function labelFromIdx(idx){
+  const names=['yes','no','up','down','left','right','on','off','stop','go','unknown','silence'];
+  if(typeof idx==='string') return idx;
+  if(typeof idx==='number' && idx>=0 && idx<names.length) return names[idx];
+  return null;
+}
+
+function applyNode(n){
+  const i=n.node-1; if(i<0||i>2) return;
+  const s=nodes[i];
+  s.label=labelFromIdx(n.label);
+  s.score=n.score;
+  s.margin=n.margin;
+  s.packets=n.packets;
+  // Snapshot is replayed every 1 s; if we pinned lastMs to Date.now() the tile
+  // would never go stale/offline. Use the bridge-supplied age so the tile
+  // ages out correctly when the node actually goes silent.
+  const ageMs=Math.max(0,Number(n.last_age_ms||0));
+  s.lastMs=Date.now()-ageMs;
+  if(n.lat) s.lat={...s.lat,...n.lat};
+  if(s.label && !isNoise(s.label)){
+    s.lastMeaningful=s.label;
+    s.lastMeaningfulMs=Date.now()-ageMs;
+  }
+}
+function applyCounters(c){
+  if(!c) return;
+  setText('c-fusion',c.fusion);
+  setText('c-packets',c.packets);
+  setText('c-rejected',c.rejected);
+  setText('c-agg',c.agg_mode_name||AGG_NAMES[c.agg_mode]||('mode '+c.agg_mode));
+  setText('c-up',c.uptime_s+'s');
+  setText('hero-total',c.fusion!=null?c.fusion:0);
+  if(c.audio_total!=null){
+    const ao=c.audio_online!=null?c.audio_online:0;
+    const at=c.audio_total;
+    const co=c.video_online?1:0;
+    setText('c-nodes','audio '+ao+'/'+at+', camera '+co+'/1');
+  }
+}
+function applyCamera(c){
+  if(!c) return;
+  cameraState=c;
+}
+
+function setText(id,v){ const el=document.getElementById(id); if(el!=null) el.textContent=v; }
+function setLive(live){
+  const el=document.getElementById('badge');
+  if(!el) return;
+  el.className='badge '+(live?'live':'disc');
+  el.textContent=live?'● live':'○ disconnected';
+}
+
+function tileClass(i){
+  const s=nodes[i];
+  if(!s.lastMs) return 'never';
+  const age=Date.now()-s.lastMs;
+  if(age>OFFLINE_MS) return 'offline';
+  if(age>STALE_MS)   return 'stale';
+  return 'online';
+}
+function tileMeta(i){
+  const s=nodes[i];
+  const cls=tileClass(i);
+  if(cls==='never')   return 'never seen';
+  const ageS=Math.round((Date.now()-s.lastMs)/1000);
+  if(cls==='offline') return 'offline · last '+ageS+'s ago';
+  if(cls==='stale')   return 'stale · last '+ageS+'s ago';
+  return 'score='+s.score+' margin='+s.margin+' pkts='+s.packets;
+}
+function renderTile(i){
+  const s=nodes[i];
+  const tile=document.getElementById('tile-'+i);
+  const lblEl=document.getElementById('lbl-'+i);
+  const metaEl=document.getElementById('meta-'+i);
+  if(!tile) return;
+  const cls=tileClass(i);
+  tile.className='tile '+cls;
+  const heldFresh=s.lastMeaningful && (Date.now()-s.lastMeaningfulMs)<MEANINGFUL_HOLD_MS;
+  if(cls==='never'||cls==='offline'){
+    lblEl.textContent='—'; lblEl.style.color='#5a6470';
+    metaEl.textContent=tileMeta(i);
+  } else if(heldFresh){
+    lblEl.textContent=s.lastMeaningful;
+    lblEl.style.color=COLORS[s.lastMeaningful]||'#e0e0e0';
+    const ageMs=Date.now()-s.lastMeaningfulMs;
+    metaEl.textContent='held '+(ageMs/1000).toFixed(1)+'s · pkts='+s.packets;
+  } else if(!s.label){
+    lblEl.textContent='—'; lblEl.style.color='#5a6470';
+    metaEl.textContent=tileMeta(i);
+  } else if(isNoise(s.label)){
+    lblEl.textContent='—'; lblEl.style.color='#5a6470';
+    metaEl.textContent='('+s.label+') · pkts='+s.packets;
+  } else {
+    lblEl.textContent=s.label;
+    lblEl.style.color=COLORS[s.label]||'#e0e0e0';
+    metaEl.textContent=tileMeta(i);
+  }
+}
+
+function latColor(med){
+  if(med<200) return '#41d287';
+  if(med<500) return '#ffae3a';
+  return '#f06363';
+}
+function renderLat(){
+  const names=['Node 1','Node 2','Node 3'];
+  let html='';
+  for(let i=0;i<3;i++){
+    const lt=nodes[i].lat||{min:0,med:0,p95:0,max:0};
+    const pct=Math.min(100,Math.round((lt.p95||0)/LAT_MAX_MS*100));
+    const col=latColor(lt.med||0);
+    const nums=lt.med?('med '+lt.med+'ms p95 '+lt.p95+'ms max '+lt.max+'ms'):'no data';
+    html+='<div class="lat-row">'
+      +'<div class="lat-name">'+names[i]+'</div>'
+      +'<div class="lat-bar-bg"><div class="lat-bar" style="width:'+pct+'%;background:'+col+'"></div></div>'
+      +'<div class="lat-nums">'+nums+'</div>'
+      +'</div>';
+  }
+  const el=document.getElementById('lat-rows');
+  if(el) el.innerHTML=html;
+}
+
+function fmtTime(at){
+  const d=new Date(at);
+  const hh=d.getHours().toString().padStart(2,'0');
+  const mm=d.getMinutes().toString().padStart(2,'0');
+  const ss=d.getSeconds().toString().padStart(2,'0');
+  return hh+':'+mm+':'+ss;
+}
+function fmtAgeMs(ms){
+  if(ms==null) return 'never';
+  if(ms<1000)  return Math.round(ms)+'ms ago';
+  if(ms<60000) return Math.round(ms/100)/10+'s ago';
+  return Math.round(ms/6000)/10+'m ago';
+}
+
+function renderFusion(){
+  const el=document.getElementById('fusion-list');
+  if(!el) return;
+  const visible=fusionList.filter(f=>!isNoise(labelFromIdx(f.label)));
+  if(!visible.length){
+    el.innerHTML='<div class="empty">No decisions yet</div>';
+    return;
+  }
+  el.innerHTML=visible.map(f=>{
+    const lblName=labelFromIdx(f.label)||'?';
+    const col=COLORS[lblName]||'#e0e0e0';
+    return '<div class="f-item">'
+      +'<div class="f-lbl" style="color:'+col+'">'+lblName+'</div>'
+      +'<div class="f-meta">score='+f.score+' margin='+f.margin+' voters='+f.voters+'</div>'
+      +((f.mode_name||AGG_NAMES[f.mode])?('<div class="f-mode">'+(f.mode_name||AGG_NAMES[f.mode])+'</div>'):'')
+      +'<div class="f-time">'+fmtTime(f.at)+'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function renderHero(){
+  const lbl=document.getElementById('hero-lbl');
+  const wrap=document.getElementById('hero-wrap');
+  if(!lbl) return;
+  if(!lastHero){
+    if(wrap) wrap.className='hero faded';
+    lbl.textContent='—'; lbl.style.color='#5a6470';
+    setText('hero-mode','—'); setText('hero-voters','—');
+    setText('hero-score','—'); setText('hero-margin','—');
+    setText('hero-time','never');
+    return;
+  }
+  const f=lastHero;
+  const lblName=labelFromIdx(f.label)||'?';
+  if(isNoise(lblName)){
+    if(wrap) wrap.className='hero faded';
+    lbl.textContent='—'; lbl.style.color='#5a6470';
+    setText('hero-mode',f.mode_name||AGG_NAMES[f.mode]||'—');
+    setText('hero-voters',f.voters!=null?f.voters:'—');
+    setText('hero-score','—'); setText('hero-margin','—');
+    setText('hero-time',fmtTime(f.at));
+    return;
+  }
+  const stale=(Date.now()-f.at)>HERO_FADE_MS;
+  if(wrap) wrap.className='hero'+(stale?' faded':'');
+  lbl.textContent=lblName;
+  lbl.style.color=COLORS[lblName]||'#e0e0e0';
+  setText('hero-mode',f.mode_name||AGG_NAMES[f.mode]||'—');
+  setText('hero-voters',f.voters!=null?f.voters:'—');
+  setText('hero-score',f.score!=null?f.score:'—');
+  setText('hero-margin',f.margin!=null?f.margin:'—');
+  setText('hero-time',fmtTime(f.at));
+}
+
+function renderCamera(){
+  const wrap=document.getElementById('cam-wrap');
+  const badge=document.getElementById('cam-badge');
+  if(!wrap||!badge) return;
+  const c=cameraState||{};
+  setText('cam-trigword',c.trigger_word||'—');
+  setText('cam-trig-count',c.triggers_total_tail!=null?c.triggers_total_tail:0);
+  setText('cam-rep-count',c.replies_total_tail!=null?c.replies_total_tail:0);
+  setText('cam-stale-count',c.stale_total_tail!=null?c.stale_total_tail:0);
+
+  const reply=c.last_reply;
+  const trigger=c.last_trigger;
+  const status=c.last_status;
+  const camLblEl=document.getElementById('cam-lbl');
+
+  if(reply){
+    const lblName=(reply.label===1||reply.label==='person')?'person'
+                 :(reply.label===0||reply.label==='no_person')?'no_person':'—';
+    camLblEl.textContent=lblName==='—'?'—':lblName;
+    camLblEl.style.color=COLORS[lblName]||'#5a6470';
+    const sc=reply.score!=null?Number(reply.score).toFixed(2):'—';
+    const lat=reply.latency_ms!=null?reply.latency_ms+'ms':'—';
+    const inv=reply.invoke_ms!=null?'invoke='+reply.invoke_ms+'ms':'';
+    const fb=reply.fb_ms!=null?'fb='+reply.fb_ms+'ms':'';
+    setText('cam-sub','score='+sc+'  '+fb+' '+inv+' total='+lat+'  trig#'+(reply.trigger_id||'?'));
+    setText('cam-last-age',reply.age_sec!=null?Math.round(reply.age_sec)+'s ago':'just now');
+    const cls=(reply.status==='fail')?'fail':'active';
+    wrap.className='cam-wrap '+cls;
+    badge.className='badge live';
+    badge.textContent=reply.status==='fail'?'● failed':'● active';
+    if(camPulseTimeout) clearTimeout(camPulseTimeout);
+    camPulseTimeout=setTimeout(()=>{
+      wrap.className='cam-wrap';
+      badge.className='badge disc';
+      badge.textContent='○ idle';
+    },CAM_PULSE_MS);
+  } else if(trigger){
+    camLblEl.textContent='…'; camLblEl.style.color='#5a6470';
+    setText('cam-sub','awaiting reply for trig#'+(trigger.trigger_id||'?'));
+    setText('cam-last-age',trigger.age_sec!=null?Math.round(trigger.age_sec)+'s ago':'just now');
+    wrap.className='cam-wrap armed';
+    badge.className='badge disc';
+    badge.textContent='○ armed';
+  } else {
+    camLblEl.textContent='—'; camLblEl.style.color='#5a6470';
+    setText('cam-sub','no replies yet');
+    setText('cam-last-age','never');
+    wrap.className='cam-wrap';
+    badge.className='badge disc';
+    badge.textContent='○ idle';
+  }
+
+  if(status){
+    const trec=status.triggers_received!=null?status.triggers_received:0;
+    const trej=status.triggers_rejected!=null?status.triggers_rejected:0;
+    const inf=status.inferences_done!=null?status.inferences_done:0;
+    const rok=status.replies_sent!=null?status.replies_sent:0;
+    const rfail=status.replies_failed!=null?status.replies_failed:0;
+    setText('cam-status-detail',
+      'trig_recv='+trec+' trig_rej='+trej+' inf='+inf+' rep_ok='+rok+'/'+rfail
+      +' ('+fmtAgeMs(status.age_sec!=null?status.age_sec*1000:null)+')');
+    setText('cam-status-count',c.status_total_tail!=null?c.status_total_tail:0);
+    setText('cam-ch',status.channel!=null?status.channel:'—');
+    setText('cam-heap',status.free_heap_kb!=null?status.free_heap_kb+'k':'—');
+    setText('cam-psram',status.psram_free_kb!=null?status.psram_free_kb+'k':'—');
+  } else {
+    setText('cam-status-detail','awaiting kind=cam_status broadcast…');
+    setText('cam-status-count',0);
+    setText('cam-ch','—'); setText('cam-heap','—'); setText('cam-psram','—');
+  }
+}
+
+function renderAll(){
+  for(let i=0;i<3;i++) renderTile(i);
+  renderLat();
+  renderHero();
+  renderFusion();
+  renderCamera();
+}
+
+setInterval(()=>{
+  for(let i=0;i<3;i++) renderTile(i);
+  renderHero();
+},500);
+
+// Transport: SSE on /api/wire_stream. Snapshot payload is shaped exactly
+// like the on-board master's WebSocket "snapshot" message — see
+// loaders.build_wire_snapshot() server-side.
+let es=null,reconnTimer=null;
+function applySnapshot(m){
+  (m.nodes||[]).forEach(n=>applyNode(n));
+  // Bridge stamps each entry with `age_ms` (gap between host_time and now);
+  // shifting `at` back by that amount lets the hero correctly fade after
+  // HERO_FADE_MS instead of pinning "last" to the current SSE tick.
+  fusionList=(m.fusion||[]).map(f=>{
+    const ageMs=Math.max(0,Number(f.age_ms||0));
+    return {...f, at: Date.now()-ageMs};
+  });
+  if(fusionList.length){ lastHero=fusionList[0]; }
+  applyCounters(m.counters);
+  applyCamera(m.camera);
+  renderAll();
+}
+function connect(){
+  try{ es=new EventSource('/api/wire_stream'); } catch(e){ schedReconn(); return; }
+  es.addEventListener('open',()=>setLive(true));
+  es.addEventListener('error',()=>{ setLive(false); try{es.close();}catch(_){} schedReconn(); });
+  es.addEventListener('snapshot',ev=>{
+    let m; try{ m=JSON.parse(ev.data); } catch(_){ return; }
+    setLive(true);
+    applySnapshot(m);
+  });
+}
+function schedReconn(){ clearTimeout(reconnTimer); reconnTimer=setTimeout(connect,1000); }
+
+renderLat(); renderHero(); renderCamera();
+connect();
+})();
+</script>
+</body>
+</html>
