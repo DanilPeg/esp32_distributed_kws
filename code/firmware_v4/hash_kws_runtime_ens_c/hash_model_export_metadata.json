@@ -1,0 +1,448 @@
+{
+  "source_bundle": "/content/drive/MyDrive/diploma_kws_cache/hash_ensemble/hash_artifacts/hash_kws12_iterlab_v1_hn95_kd128_layerwise_signed_residual_v4_m3/hash_kws_student_student.pt",
+  "experiment": {
+    "tag": "hash_kws12_iterlab_v1_hn95_kd128_layerwise_signed_residual_v4_m3",
+    "vocabulary_preset": "kws12",
+    "teacher_reuse_tag": "hash_kws12_iterlab_v1_hn95_kd128_layerwise_signed_residual_v4_t_m3",
+    "feature": {
+      "sample_rate": 16000,
+      "clip_samples": 16000,
+      "window_ms": 30,
+      "hop_ms": 20,
+      "n_mels": 40,
+      "center": false,
+      "frontend_name": "exact_microfrontend",
+      "normalize_mode": "none",
+      "log_offset": 1e-06,
+      "require_exact_microfrontend": true,
+      "lower_band_limit": 125.0,
+      "upper_band_limit": 7500.0,
+      "smoothing_bits": 10,
+      "even_smoothing": 0.025,
+      "odd_smoothing": 0.06,
+      "min_signal_remaining": 0.05,
+      "enable_pcan": true,
+      "pcan_strength": 0.95,
+      "pcan_offset": 80.0,
+      "gain_bits": 21,
+      "enable_log": true,
+      "scale_shift": 6,
+      "exact_value_divisor": 665.6,
+      "specaugment_prob": 0.2,
+      "time_mask_max": 3,
+      "freq_mask_max": 2
+    },
+    "dataset": {
+      "data_dir": "data",
+      "batch_size": 96,
+      "num_workers": 2,
+      "persistent_workers": true,
+      "prefetch_factor": 2,
+      "seed": 47,
+      "unknown_fraction": 1.0,
+      "silence_fraction": 0.2,
+      "silence_reference": "known",
+      "train_limit": null,
+      "val_limit": null,
+      "test_limit": null,
+      "time_shift_ms": 100,
+      "gain_min": 0.85,
+      "gain_max": 1.15,
+      "noise_stddev": 0.0,
+      "keyword_noise_mix_prob": 0.4,
+      "keyword_noise_snr_db_min": 10.0,
+      "keyword_noise_snr_db_max": 20.0,
+      "cache_features": true,
+      "cache_dtype": "int8",
+      "stochastic_augmentation": true,
+      "augment_cache_views": 4
+    },
+    "model": {
+      "teacher_name": "dense_dscnn_teacher",
+      "student_name": "hash_dscnn_deeper",
+      "channels": 128,
+      "teacher_channels": 128,
+      "num_blocks": 4,
+      "teacher_num_blocks": 6,
+      "codebook_size": 500,
+      "stem_codebook_size": 512,
+      "depthwise_codebook_size": 224,
+      "pointwise_codebook_size": 1536,
+      "linear_codebook_size": 512,
+      "depthwise_codebook_sizes": [
+        288,
+        256,
+        224,
+        192
+      ],
+      "pointwise_codebook_sizes": [
+        1024,
+        1280,
+        1536,
+        1792
+      ],
+      "signed_hash": true,
+      "hash_only_pointwise": false,
+      "use_residual": true,
+      "teacher_dropout": 0.05,
+      "student_dropout": 0.0
+    },
+    "train": {
+      "seed": 47,
+      "teacher_epochs": 48,
+      "student_pretrain_epochs": 6,
+      "student_epochs": 40,
+      "student_polish_epochs": 4,
+      "teacher_lr": 0.0008,
+      "student_lr": 0.0008,
+      "polish_lr": 0.0002,
+      "weight_decay": 0.0001,
+      "optimizer_name": "adamw",
+      "teacher_scheduler_name": "cosine",
+      "student_scheduler_name": "cosine",
+      "label_smoothing": 0.02,
+      "teacher_label_smoothing": 0.02,
+      "kd_alpha": 0.55,
+      "kd_alpha_schedule": "constant",
+      "kd_alpha_final": null,
+      "kd_temperature": 4.5,
+      "kd_temperature_schedule": "constant",
+      "kd_temperature_final": null,
+      "cache_teacher_logits": false,
+      "teacher_logits_cache_dir": "/content/drive/MyDrive/diploma_kws_cache/hash_ensemble/teacher_logits_cache",
+      "teacher_logits_cache_dtype": "float16",
+      "teacher_logits_cache_rebuild": false,
+      "polish_label_smoothing": null,
+      "grad_clip_norm": 1.0,
+      "teacher_early_stopping_patience": 8,
+      "student_early_stopping_patience": 10,
+      "use_amp": true,
+      "use_ema": false,
+      "ema_decay": 0.999,
+      "eval_with_ema": false,
+      "top_k": 3,
+      "selection_metric": "balanced"
+    },
+    "export": {
+      "artifacts_dir": "/content/drive/MyDrive/diploma_kws_cache/hash_ensemble/hash_artifacts",
+      "model_stem": "hash_kws_student"
+    },
+    "commands": [
+      "yes",
+      "no",
+      "up",
+      "down",
+      "left",
+      "right",
+      "on",
+      "off",
+      "stop",
+      "go"
+    ],
+    "all_labels": [
+      "yes",
+      "no",
+      "up",
+      "down",
+      "left",
+      "right",
+      "on",
+      "off",
+      "stop",
+      "go",
+      "unknown",
+      "silence"
+    ],
+    "num_labels": 12,
+    "feature_shape": [
+      40,
+      49
+    ],
+    "model_input_shape": [
+      1,
+      40,
+      49
+    ],
+    "uses_teacher": true,
+    "uses_distillation": true
+  },
+  "bundle_stage_name": "student",
+  "frontend_warning": "The exported runtime preserves model weights and activation scales, but on-device accuracy still depends on matching the training frontend.",
+  "activation_quant_params": [
+    {
+      "stage": "stem",
+      "input_scale": 1.0078740157480315,
+      "output_scale": 0.02972033080153578
+    },
+    {
+      "stage": "block0_depthwise",
+      "input_scale": 0.02972033080153578,
+      "output_scale": 0.14299536877729763
+    },
+    {
+      "stage": "block0_pointwise",
+      "input_scale": 0.14299536877729763,
+      "output_scale": 0.08216006361593411
+    },
+    {
+      "stage": "block1_depthwise",
+      "input_scale": 0.08216006361593411,
+      "output_scale": 0.19706702044629676
+    },
+    {
+      "stage": "block1_pointwise",
+      "input_scale": 0.19706702044629676,
+      "output_scale": 0.14567765663927934
+    },
+    {
+      "stage": "block2_depthwise",
+      "input_scale": 0.14567765663927934,
+      "output_scale": 0.2242406109186608
+    },
+    {
+      "stage": "block2_pointwise",
+      "input_scale": 0.2242406109186608,
+      "output_scale": 0.20825453630582555
+    },
+    {
+      "stage": "block3_depthwise",
+      "input_scale": 0.20825453630582555,
+      "output_scale": 0.16738861564576157
+    },
+    {
+      "stage": "block3_pointwise",
+      "input_scale": 0.16738861564576157,
+      "output_scale": 0.4894180598221426
+    }
+  ],
+  "model_summary": {
+    "trainable_parameters": 11084,
+    "hash_compact_parameters": 8780,
+    "virtual_dense_parameters": 72832,
+    "maccs_rough": 35649536,
+    "layer_inventory": [
+      {
+        "type": "analytic_hash_conv2d",
+        "in_channels": 1,
+        "out_channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "codebook_size": 512,
+        "layer_id": 0,
+        "signed_hash": true,
+        "name": "conv0",
+        "compact_parameters": 640,
+        "virtual_parameters": 1152
+      },
+      {
+        "type": "analytic_hash_depthwise_conv2d",
+        "channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "codebook_size": 288,
+        "layer_id": 1,
+        "signed_hash": true,
+        "name": "blocks.0.depthwise",
+        "compact_parameters": 416,
+        "virtual_parameters": 1152
+      },
+      {
+        "type": "analytic_hash_conv2d",
+        "in_channels": 128,
+        "out_channels": 128,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "codebook_size": 1024,
+        "layer_id": 2,
+        "signed_hash": true,
+        "name": "blocks.0.pointwise",
+        "compact_parameters": 1152,
+        "virtual_parameters": 16384
+      },
+      {
+        "type": "analytic_hash_depthwise_conv2d",
+        "channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "codebook_size": 256,
+        "layer_id": 3,
+        "signed_hash": true,
+        "name": "blocks.1.depthwise",
+        "compact_parameters": 384,
+        "virtual_parameters": 1152
+      },
+      {
+        "type": "analytic_hash_conv2d",
+        "in_channels": 128,
+        "out_channels": 128,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "codebook_size": 1280,
+        "layer_id": 4,
+        "signed_hash": true,
+        "name": "blocks.1.pointwise",
+        "compact_parameters": 1408,
+        "virtual_parameters": 16384
+      },
+      {
+        "type": "analytic_hash_depthwise_conv2d",
+        "channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "codebook_size": 224,
+        "layer_id": 5,
+        "signed_hash": true,
+        "name": "blocks.2.depthwise",
+        "compact_parameters": 352,
+        "virtual_parameters": 1152
+      },
+      {
+        "type": "analytic_hash_conv2d",
+        "in_channels": 128,
+        "out_channels": 128,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "codebook_size": 1536,
+        "layer_id": 6,
+        "signed_hash": true,
+        "name": "blocks.2.pointwise",
+        "compact_parameters": 1664,
+        "virtual_parameters": 16384
+      },
+      {
+        "type": "analytic_hash_depthwise_conv2d",
+        "channels": 128,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "codebook_size": 192,
+        "layer_id": 7,
+        "signed_hash": true,
+        "name": "blocks.3.depthwise",
+        "compact_parameters": 320,
+        "virtual_parameters": 1152
+      },
+      {
+        "type": "analytic_hash_conv2d",
+        "in_channels": 128,
+        "out_channels": 128,
+        "kernel_size": [
+          1,
+          1
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          0,
+          0
+        ],
+        "codebook_size": 1792,
+        "layer_id": 8,
+        "signed_hash": true,
+        "name": "blocks.3.pointwise",
+        "compact_parameters": 1920,
+        "virtual_parameters": 16384
+      },
+      {
+        "type": "analytic_hash_linear",
+        "in_dim": 128,
+        "out_dim": 12,
+        "codebook_size": 512,
+        "layer_id": 9,
+        "signed_hash": true,
+        "name": "fc",
+        "compact_parameters": 524,
+        "virtual_parameters": 1536
+      }
+    ]
+  },
+  "firmware_flash_summary": {
+    "hash_codebook_bytes_int8": 7616,
+    "post_affine_and_classifier_bias_bytes_float32": 9264,
+    "activation_quant_bytes_float32": 72,
+    "approx_runtime_model_bytes": 16952,
+    "virtual_dense_int8_weight_bytes": 72832
+  },
+  "runtime_output_dir": "/content/diploma_esp32_distributed_nn/code/firmware/hash_kws_runtime_ens_c_v4"
+}
